@@ -8,4 +8,4 @@ RUN --mount=type=cache,target=/root/.m2 mvn -f pom.xml clean package
 
 
 FROM payara/server-full AS prod
-COPY --from=build /app/target/mobapp4-1.0.war $DEPLOY_DIR/mobapp4.war
+COPY --from=build /app/target/appsrv-1.0.war $DEPLOY_DIR/appsrv.war
