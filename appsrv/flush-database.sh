@@ -9,5 +9,6 @@ docker-compose -f $COMPOSE_DEV_FILE rm &&
 docker volume rm appsrv_database-data &&
 docker-compose -f $COMPOSE_DEV_FILE up -d --build database api 
 echo "The was databse and api was restarted, use CTRL-C to detach from the log console"
+echo "BØØØØØ"
 sleep 1.5
 docker-compose -f $COMPOSE_DEV_FILE logs -f
