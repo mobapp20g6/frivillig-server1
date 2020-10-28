@@ -1,18 +1,9 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-<<<<<<< Updated upstream
-<<<<<<< HEAD
 import lombok.Getter;
-=======
->>>>>>> 7b4344b582cb2f0d2c9f68c9ef1ef77cc306e2cf
-=======
-import lombok.Getter;
->>>>>>> Stashed changes
 import lombok.NoArgsConstructor;
-
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -20,14 +11,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
-<<<<<<< Updated upstream
-<<<<<<< HEAD
 import java.util.List;
-=======
->>>>>>> 7b4344b582cb2f0d2c9f68c9ef1ef77cc306e2cf
-=======
-import java.util.List;
->>>>>>> Stashed changes
 
 @Entity(name = "users")
 @Data
