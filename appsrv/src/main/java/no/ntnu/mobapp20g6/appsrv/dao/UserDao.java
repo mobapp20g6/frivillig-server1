@@ -21,8 +21,6 @@ import javax.sql.DataSource;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -53,12 +51,13 @@ public class UserDao {
 		if (found == null) {
 			System.out.println("- Status...........: " + "Not in database");
 			System.out.println();
+			log.info("Unable to find user in DB " + id);
 			return null;
 		} else {
 			System.out.println("- Status.........: " + "In database");
 			System.out.println("- Id.............: " + found.getId());
 			System.out.println();
-			Logger.getGlobal().log(Level.INFO,"DAO-USER: Found user " + found.getId());
+			log.info("Found user in DB " + id);
 			return found;
 		}
 	}
