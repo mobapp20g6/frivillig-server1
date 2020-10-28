@@ -29,6 +29,7 @@ public class AuthRunOnStartup {
 	@PostConstruct
 	public void init() {
 		long RoleGroups = (long) em.createQuery("SELECT count(g.name) from RoleGroup g").getSingleResult();
+		System.out.println("Groups found " +  RoleGroups);
 		if (RoleGroups == 0) {
 			em.persist(new RoleGroup(RoleGroup.USER));
 			em.persist(new RoleGroup(RoleGroup.ADMIN));
@@ -40,7 +41,7 @@ public class AuthRunOnStartup {
 			+ em.createQuery("SELECT count(g.name) from RoleGroup g")
 				.getSingleResult() + " RoleGroups in DB");
 
-		User admin = userDao.createUser("admin@admin.ad", "123456");
+		User admin = userDao.createUser("admin@admin.ad", "123456", "Mix", "Master");
 		// TEST DUP USER
 		//userBean.addRoleGroup(admin, "user", true);
 		// TEST REMOVE USER

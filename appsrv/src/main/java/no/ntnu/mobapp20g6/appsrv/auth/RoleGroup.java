@@ -30,6 +30,10 @@ public class RoleGroup implements Serializable {
 	String project;
 
 	// M-N REF
+
+	/**
+	 * CROSS-JOIN - REFERENCE *
+	 */
 	@JsonbTransient
 	@Getter
 	@ManyToMany

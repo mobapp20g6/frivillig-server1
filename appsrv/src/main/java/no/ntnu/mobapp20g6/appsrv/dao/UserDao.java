@@ -18,8 +18,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.security.enterprise.identitystore.PasswordHash;
 import javax.sql.DataSource;
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -55,6 +58,7 @@ public class UserDao {
 			System.out.println("- Status.........: " + "In database");
 			System.out.println("- Id.............: " + found.getId());
 			System.out.println();
+			Logger.getGlobal().log(Level.INFO,"DAO-USER: Found user " + found.getId());
 			return found;
 		}
 	}
@@ -93,7 +97,7 @@ public class UserDao {
 	 * @param password
 	 * @return
 	 */
-	public User createUser(String email, String password) {
+	public User createUser(String email, String password, String firstName, String lastName) {
 		System.out.println("=== USER EJB: CREATE USER ===");
 		System.out.print("Query parameters: mail:" + email
 			+ ", pass:" + password);
@@ -112,16 +116,23 @@ public class UserDao {
 			User newUser = new User();
 			newUser.setEmail(email);
 			newUser.setPassword(hasher.generate(password.toCharArray()));
-			RoleGroup userRoleGroup = em.find(RoleGroup.class,
-				RoleGroup.USER);
-			newUser.getRoleGroups().add(userRoleGroup);
-			User created = em.merge(newUser);
-			System.out.println("=== USER EJB: CREATE USER ===");
-			System.out.println("- Status...........: " + "Created OK");
-			System.out.println("- In database as id: " + created.getId());
-			System.out.println("- UserRoleGroup(s).........: " + returnRoleGroupNames(created.getRoleGroups()));
-			System.out.println();
-			return created;
+			newUser.setFirstName(firstName);
+			newUser.setLastName(lastName);
+			try {
+				RoleGroup userRoleGroup = em.find(RoleGroup.class,
+						RoleGroup.USER);
+				newUser.getRoleGroups().add(userRoleGroup);
+				User created = em.merge(newUser);
+
+				System.out.println("=== USER EJB: CREATE USER ===");
+				System.out.println("- Status...........: " + "Created OK");
+				System.out.println("- In database as id: " + created.getId());
+				System.out.println("- UserRoleGroup(s).........: " + returnRoleGroupNames(created.getRoleGroups()));
+				System.out.println();
+				return created;
+			} catch (ConstraintViolationException e) {
+				return null;
+			}
 		}
 	}
 

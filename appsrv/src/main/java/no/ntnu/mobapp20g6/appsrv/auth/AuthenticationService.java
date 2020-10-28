@@ -181,10 +181,10 @@ public class AuthenticationService {
 		}
 	}
 
-	private Response buildCreatedUserResponse(String email, String pwd) {
+	private Response buildCreatedUserResponse(String email, String pwd, String firstName, String lastName) {
 		System.out.println("=== INVOKING REST-AUTH: CREATE USER ===");
 		System.out.print("Query parameters: email:" + email + ", password:" + pwd);
-		User createdUser = userDao.createUser(email, pwd);
+		User createdUser = userDao.createUser(email, pwd, firstName, lastName);
 		if (createdUser == null) {
 
 			return Response.status(Response.Status.BAD_REQUEST).build();
@@ -197,15 +197,12 @@ public class AuthenticationService {
 	@POST
 	@Path("create")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createUserService(@HeaderParam("email") String email, @HeaderParam("pwd") String pwd) {
-		return buildCreatedUserResponse(email, pwd);
-	}
-
-	@POST
-	@Path("form-create")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response createUserFormService(@FormParam("email") String email, @FormParam("pwd") String pwd) {
-		return buildCreatedUserResponse(email, pwd);
+	public Response createUserFormService(
+			@FormParam("email") String email,
+			@FormParam("pwd") String pwd,
+			@FormParam("firstname") String firstN,
+			@FormParam("lastname") String lastN) {
+		return buildCreatedUserResponse(email, pwd, firstN, lastN);
 	}
 
 	/**

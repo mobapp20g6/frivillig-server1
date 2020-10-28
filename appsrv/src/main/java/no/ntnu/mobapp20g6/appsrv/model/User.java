@@ -12,6 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -82,8 +83,15 @@ public class User implements Serializable {
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "ownerUser")
     private List<Task> ownedTasks;
+    
 
+	public List<RoleGroup> getRoleGroups() {
+		if (this.roleGroups == null) {
+			this.roleGroups = new ArrayList<>();
+		}
+		return this.roleGroups;
 
+	}
 
 
 
