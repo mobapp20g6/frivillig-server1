@@ -14,7 +14,11 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
+@NamedQuery(name = Task.FIND_TASK_BY_ID, query = "SELECT t FROM tasks t WHERE t.id = :id") //<-- Need testing
 public class Task implements Serializable {
+    public static final String FIND_ALL_TASKS = "getAllTasks";
+    public static final String FIND_TASK_BY_ID = "findTaskById";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
