@@ -3,10 +3,15 @@
   <persistence-unit name="mpconfig" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>java:app/jdbc/postgres-microprofile</jta-data-source>
+    <class>no.ntnu.mobapp20g6.appsrv.model.Group</class>
+    <class>no.ntnu.mobapp20g6.appsrv.model.Location</class>
+    <class>no.ntnu.mobapp20g6.appsrv.model.Picture</class>
+    <class>no.ntnu.mobapp20g6.appsrv.model.Task</class>
+    <class>no.ntnu.mobapp20g6.appsrv.model.User</class>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
       <property name="javax.persistence.query.timeout" value="3000"/>
-      <property name="eclipselink.ddl-generation.output-mode" value="both"/>
+      <property name="eclipselink.ddl-generation.output-mode" value="database"/>
     </properties>
   </persistence-unit>
 </persistence>
