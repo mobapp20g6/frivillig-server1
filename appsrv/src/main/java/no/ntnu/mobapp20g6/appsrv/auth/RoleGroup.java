@@ -25,6 +25,7 @@ public class RoleGroup implements Serializable {
 	public static final String[] PERMISSIONS = {USER, ADMIN};
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	String name;
 
 	String project;
