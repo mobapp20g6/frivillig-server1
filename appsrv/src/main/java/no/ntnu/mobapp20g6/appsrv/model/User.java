@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
+
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -17,7 +19,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQueries({
+        @NamedQuery(name = User.FIND_ALL_USERS,
+                query = "SELECT p FROM users p ORDER BY p.firstName"),
+        @NamedQuery(name = User.FIND_USER_BY_EMAIL,
+                query = "SELECT p FROM users p WHERE p.email LIKE :email")
+})
 public class User implements Serializable {
+
+    public final static String FIND_ALL_USERS = "User.findAllUsers";
+    public final static String FIND_USER_BY_EMAIL = "User.findUserByEmail";
 
     public enum State {
         ACTIVE, INACTIVE
@@ -56,13 +67,25 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     State currentState = State.ACTIVE;
 
+    // M-N OWNER
+    @ManyToMany
+    @JoinTable(name = "user_has_rolegroup",
+            joinColumns = @JoinColumn(
+                    name = "id",
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "name",
+                    referencedColumnName = "name"))
+    List<RoleGroup> roleGroups;
+
     // 1-N REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "ownerUser")
     private List<Task> ownedTasks;
 
-    // 1-N REF
-    @Getter
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "assignedTask")
-    private List<Task> assignedTasks;
+
+
+
+
+
 }

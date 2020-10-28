@@ -21,7 +21,7 @@ public class Service {
     @GET
     @Path("/listtasks")
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed(value = {Role.USER})
+    //@RolesAllowed(value = {RoleGroup.USER})
     public Response listTasks() {
         List<Task> taskList = taskDAO.getAllTasks();
         if(taskList == null || taskList.isEmpty()) {
@@ -34,7 +34,7 @@ public class Service {
     @GET
     @Path("/gettask")
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed(value = {Role.USER})
+    //@RolesAllowed(value = {RoleGroup.USER})
     public Response getTask(
             @QueryParam("id") Long taskId) {
         //TODO test what happens if QueryParam contains alphabetic
@@ -49,7 +49,7 @@ public class Service {
     @POST
     @Path("/createtask")
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed(value = {Role.USER})
+    //@RolesAllowed(value = {RoleGroup.USER})
     public Response createTask(
             @FormParam("title") String title,
             @FormParam("description") String description,
@@ -62,7 +62,7 @@ public class Service {
     @DELETE
     @Path("/removetask")
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed(value = {Role.USER})
+    //@RolesAllowed(value = {RoleGroup.USER})
     public Response removeTask(
             @QueryParam("id") Long taskId) {
         return null;
@@ -71,7 +71,7 @@ public class Service {
     @POST
     @Path("/updatetask")
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed(value = {Role.USER})
+    //@RolesAllowed(value = {RoleGroup.USER})
     public Response updateTask(
             @FormParam("title") String title,
             @FormParam("description") String description,
