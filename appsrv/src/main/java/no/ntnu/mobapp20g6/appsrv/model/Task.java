@@ -45,24 +45,28 @@ public class Task implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date created;
 
+    @Column(name = "scheduel_date")
+    @Temporal(TemporalType.DATE)
+    private Date scheduleDate;
+
     @Size(max = 280)
     private String description;
 
     @Column(name = "participant_limit")
     @Positive
     @NotEmpty
-    private int participantLimit;
+    private Long participantLimit;
 
     @Column(name = "participant_count")
     @Positive
-    private int participantCount;
+    private Long participantCount;
 
     @PrePersist
     protected void onCreate() {
         created = new Date();
 
         //Owner is not participant
-        participantCount = 0;
+        participantCount = 0L;
     }
 
     // N-1 Owner
@@ -104,6 +108,29 @@ public class Task implements Serializable {
         }
         return this.users;
 
+    }
+
+    /**
+     * Task constructor.
+     * @param title of task.
+     * @param description to describe the task.
+     * @param scheduled date of when task is scheduled to be done.
+     * @param participantLimit maximum of participants allowed to join task. Will be set
+     *                         to 1 if null or 0.
+     * @param creator of the task.
+     * @param associatedGroup group the task is associated with. If null group is public.
+     */
+    public Task(String title, String description, Date scheduled, Long participantLimit,
+                User creator, Group associatedGroup) {
+        this.title = title;
+        this.description = description;
+        this.scheduleDate = scheduled;
+        if(participantLimit == null || participantLimit == 0) {
+            participantLimit = 1L;
+        }
+        this.participantLimit = participantLimit;
+        this.creatorUser = creator;
+        this.associatedGroup = associatedGroup;
     }
 
 }
