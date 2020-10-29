@@ -25,6 +25,7 @@ public class RoleGroup implements Serializable {
 	public static final String[] PERMISSIONS = {USER, ADMIN};
 
 	@Id
+	@Column(name = "role_name")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	String name;
 
@@ -40,11 +41,11 @@ public class RoleGroup implements Serializable {
 	@ManyToMany
 	@JoinTable(name = "user_has_rolegroup",
 		joinColumns = @JoinColumn(
-			name = "name",
-			referencedColumnName = "name"),
+			name = "role_name",
+			referencedColumnName = "role_name"),
 		inverseJoinColumns = @JoinColumn(
-			name = "id",
-			referencedColumnName = "id"))
+			name = "user_id",
+			referencedColumnName = "user_id"))
 	List<User> users;
 
 	public RoleGroup(String name) {

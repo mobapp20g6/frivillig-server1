@@ -3,12 +3,16 @@ package no.ntnu.mobapp20g6.appsrv.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "tasks")
 @Data
@@ -22,6 +26,7 @@ public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="task_id")
     private Long id;
 
 
@@ -29,6 +34,7 @@ public class Task implements Serializable {
         ACTIVE, ARCHIVED
     }
 
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     Status currentStatus = Status.ACTIVE;
 
@@ -61,7 +67,37 @@ public class Task implements Serializable {
 
     // N-1 Owner
     @ManyToOne
-    @JoinColumn(name = "owner_user_id", referencedColumnName = "id")
+    @JoinColumn(name = "owner_user", referencedColumnName = "user_id")
     private User ownerUser;
+
+    // 1-1 Owner
+    @OneToOne
+    @JoinColumn(name = "task_location", referencedColumnName = "location_id")
+    private Location location;
+
+    // 1-1 Owner
+    @OneToOne
+    @JoinColumn(name = "task_picture_", referencedColumnName = "picture_id")
+    private Picture picture;
+
+    // M-N Owner
+    @ManyToMany
+    @JoinTable(name = "task_has_user",
+            joinColumns = @JoinColumn(
+                    name = "task_task_id",
+                    referencedColumnName = "task_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "user_user_id",
+                    referencedColumnName = "user_id"))
+    List<User> users;
+
+
+    public List<User> getUsers() {
+        if (this.users == null) {
+            this.users = new ArrayList<>();
+        }
+        return this.users;
+
+    }
 
 }

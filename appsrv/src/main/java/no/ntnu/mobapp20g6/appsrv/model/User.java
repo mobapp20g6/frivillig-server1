@@ -36,6 +36,7 @@ public class User implements Serializable {
     }
 
     @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
@@ -72,28 +73,48 @@ public class User implements Serializable {
     @ManyToMany
     @JoinTable(name = "user_has_rolegroup",
             joinColumns = @JoinColumn(
-                    name = "id",
-                    referencedColumnName = "id"),
+                    name = "user_id",
+                    referencedColumnName = "user_id"),
             inverseJoinColumns = @JoinColumn(
-                    name = "name",
-                    referencedColumnName = "name"))
+                    name = "role_name",
+                    referencedColumnName = "role_name"))
     List<RoleGroup> roleGroups;
+
+    public List<RoleGroup> getRoleGroups() {
+        if (this.roleGroups == null) {
+            this.roleGroups = new ArrayList<>();
+        }
+        return this.roleGroups;
+
+    }
+
+    // N-1 Owner
+    @ManyToOne
+    @JoinColumn(name = "member_group", referencedColumnName = "group_id")
+    private Group memberOfGroup;
 
     // 1-N REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "ownerUser")
     private List<Task> ownedTasks;
-    
 
-	public List<RoleGroup> getRoleGroups() {
-		if (this.roleGroups == null) {
-			this.roleGroups = new ArrayList<>();
-		}
-		return this.roleGroups;
+    // N-1 REF
+    @Getter
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ownerUser")
+    private List<Group> ownedGroups;
 
-	}
-
-
+    // M-N REF
+    @JsonbTransient
+    @Getter
+    @ManyToMany
+    @JoinTable(name = "task_has_user",
+            joinColumns = @JoinColumn(
+                    name = "task_task_id",
+                    referencedColumnName = "task_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "user_user_id",
+                    referencedColumnName = "user_id"))
+    List<Task> assignedTasks;
 
 
 }
