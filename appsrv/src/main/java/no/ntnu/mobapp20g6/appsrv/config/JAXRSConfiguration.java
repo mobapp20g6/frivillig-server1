@@ -1,4 +1,4 @@
-package no.ntnu.mobapp20g6.appsrv;
+package no.ntnu.mobapp20g6.appsrv.config;
 
 import org.eclipse.microprofile.auth.LoginConfig;
 
