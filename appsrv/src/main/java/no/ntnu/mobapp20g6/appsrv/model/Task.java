@@ -67,18 +67,24 @@ public class Task implements Serializable {
 
     // N-1 Owner
     @ManyToOne
-    @JoinColumn(name = "owner_user", referencedColumnName = "user_id")
-    private User ownerUser;
+    @JoinColumn(name = "creator_user_id", referencedColumnName = "user_id")
+    private User creatorUser;
+
+    // N-1 Owner
+    @ManyToOne
+    @JoinColumn(name = "member_group_id", referencedColumnName = "group_id")
+    private Group associatedGroup;
 
     // 1-1 Owner
     @OneToOne
-    @JoinColumn(name = "task_location", referencedColumnName = "location_id")
+    @JoinColumn(name = "location_id", referencedColumnName = "location_id")
     private Location location;
 
     // 1-1 Owner
     @OneToOne
-    @JoinColumn(name = "task_picture_", referencedColumnName = "picture_id")
+    @JoinColumn(name = "picture_id", referencedColumnName = "picture_id")
     private Picture picture;
+
 
     // M-N Owner
     @ManyToMany

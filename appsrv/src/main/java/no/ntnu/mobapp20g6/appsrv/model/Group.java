@@ -51,16 +51,21 @@ public class Group implements Serializable {
 
     // 1-1 Owner
     @OneToOne
-    @JoinColumn(name = "group_location_id", referencedColumnName = "location_id")
+    @JoinColumn(name = "location_id", referencedColumnName = "location_id")
     private Location location;
 
     // 1-1 Owner
     @OneToOne
-    @JoinColumn(name = "group_picture_id", referencedColumnName = "picture_id")
+    @JoinColumn(name = "picture_id", referencedColumnName = "picture_id")
     private Picture picture;
 
     // 1-N REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "memberOfGroup")
     private List<User> memberUsers;
+
+    // 1-N REF
+    @Getter
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "associatedGroup")
+    private List<Task> associatedTasks;
 }

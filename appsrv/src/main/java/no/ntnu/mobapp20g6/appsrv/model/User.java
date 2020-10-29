@@ -90,13 +90,13 @@ public class User implements Serializable {
 
     // N-1 Owner
     @ManyToOne
-    @JoinColumn(name = "member_group", referencedColumnName = "group_id")
+    @JoinColumn(name = "member_group_id", referencedColumnName = "group_id")
     private Group memberOfGroup;
 
     // 1-N REF
     @Getter
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ownerUser")
-    private List<Task> ownedTasks;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "creatorUser")
+    private List<Task> creatorOfTasks;
 
     // N-1 REF
     @Getter
