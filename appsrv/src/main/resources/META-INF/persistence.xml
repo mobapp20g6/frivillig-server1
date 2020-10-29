@@ -8,8 +8,9 @@
     <class>no.ntnu.mobapp20g6.appsrv.model.Picture</class>
     <class>no.ntnu.mobapp20g6.appsrv.model.Task</class>
     <class>no.ntnu.mobapp20g6.appsrv.model.User</class>
+    <class>no.ntnu.mobapp20g6.appsrv.auth.RoleGroup</class>
     <properties>
-      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
       <property name="javax.persistence.query.timeout" value="3000"/>
       <property name="eclipselink.ddl-generation.output-mode" value="database"/>
     </properties>

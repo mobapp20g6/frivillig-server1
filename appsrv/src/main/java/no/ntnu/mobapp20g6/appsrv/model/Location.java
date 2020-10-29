@@ -2,12 +2,13 @@ package no.ntnu.mobapp20g6.appsrv.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity(name = "locations")
 @Data
@@ -16,6 +17,7 @@ import java.io.Serializable;
 public class Location implements Serializable {
 
     @Id
+    @Column(name="location_id")
     private Long Id;
 
     @Column(name = "gps_lat")
@@ -34,4 +36,16 @@ public class Location implements Serializable {
 
     @Column(length = 2)
     private String country;
+
+
+    // 1-1 REF
+    @Getter
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "location")
+    private Group group;
+
+
+    // 1-1 REF
+    @Getter
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "location")
+    private Task task;
 }
