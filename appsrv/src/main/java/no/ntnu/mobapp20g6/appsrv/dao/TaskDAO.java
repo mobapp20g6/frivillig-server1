@@ -79,4 +79,28 @@ public class TaskDAO {
             }
         }
     }
+
+    /**
+     * Removes a task from the database.
+     * @param removerUser user trying to remove the task.
+     * @param taskToBeRemoved task to be removed.
+     * @return true if task was successfully removed.
+     */
+    public boolean removeTask(User removerUser, Task taskToBeRemoved) {
+        if(removerUser.equals(taskToBeRemoved.getCreatorUser())) {
+            em.remove(taskToBeRemoved);
+            em.flush();
+            if(getTaskById(taskToBeRemoved.getId()) == null) {
+                //Task was successfully removed.
+                return true;
+            } else {
+                System.out.println("Something went wrong with removeTask!\n Task with id: "
+                + taskToBeRemoved.getId() + " was not removed.");
+                return false;
+            }
+        } else {
+            //User is not owner of task.
+            return false;
+        }
+    }
 }

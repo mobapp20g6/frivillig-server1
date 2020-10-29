@@ -1,5 +1,6 @@
 package no.ntnu.mobapp20g6.appsrv.resources;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
@@ -89,7 +90,25 @@ public class Service {
     @RolesAllowed(value = {RoleGroup.USER})
     public Response removeTask(
             @QueryParam("id") Long taskId) {
-        return null;
+        if(taskId != null) {
+            Task taskToBeRemoved = taskDAO.getTaskById(taskId);
+            if(taskToBeRemoved != null) {
+                boolean taskWasRemoved = taskDAO.removeTask(userDAO.findUserById(principal.getName()), taskToBeRemoved);
+                if(taskWasRemoved) {
+                    //Task was successfully removed.
+                    return Response.status(Response.Status.OK).build();
+                } else {
+                    //User is not owner of task.
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
+            } else {
+                //No task with id found.
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            //taskId is null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     @POST
