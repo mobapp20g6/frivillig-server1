@@ -76,6 +76,29 @@
             <version>1.4</version>
             <type>jar</type>
         </dependency>
+
+        <!-- JUnit Jupiter -->
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Jersey Test Framework -->
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-jdk-http</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+
     </dependencies>
     
      <build>
