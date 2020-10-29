@@ -50,11 +50,16 @@ public class Service {
     public Response getTask(
             @QueryParam("id") Long taskId) {
         //TODO test what happens if QueryParam contains alphabetic
-        Task task = taskDAO.getTaskById(taskId);
-        if(task == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if(taskId != null) {
+            Task task = taskDAO.getTaskById(taskId);
+            if (task == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            } else {
+                return Response.ok(task).build();
+            }
         } else {
-            return Response.ok(task).build();
+            //taskId is null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -122,6 +127,7 @@ public class Service {
             @FormParam("scheduledate") Date scheduleDate,
             @FormParam("groupid") Long groupId,
             @QueryParam("id") Long taskId) {
+
         return null;
     }
 }

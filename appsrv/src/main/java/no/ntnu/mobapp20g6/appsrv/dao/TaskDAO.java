@@ -7,8 +7,10 @@ import no.ntnu.mobapp20g6.appsrv.model.User;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -87,7 +89,7 @@ public class TaskDAO {
      * @return true if task was successfully removed.
      */
     public boolean removeTask(User removerUser, Task taskToBeRemoved) {
-        if(removerUser.equals(taskToBeRemoved.getCreatorUser())) {
+        if(isUserOwnerOfTask(removerUser, taskToBeRemoved)) {
             em.remove(taskToBeRemoved);
             em.flush();
             if(getTaskById(taskToBeRemoved.getId()) == null) {
@@ -102,5 +104,73 @@ public class TaskDAO {
             //User is not owner of task.
             return false;
         }
+    }
+
+    private boolean isUserOwnerOfTask(User user, Task task) {
+        return user.equals(task.getCreatorUser());
+    }
+
+    /**
+     * Update the task if the user is the owner.
+     * @param updaterUser user trying to update task.
+     * @param taskToBeUpdated task to be updated.
+     * @param newTitle new title of task.
+     * @param newDescription new description of task.
+     * @param newMaxUsers new participant limit on task.
+     * @param newScheduleDate new schedule date.
+     * @param newGroup new group the task is associated with.
+     * @return Task if update was successful. Null if user is not owner or helping methods fail.
+     */
+    public Task updateTask(User updaterUser, Task taskToBeUpdated, String newTitle, String newDescription,
+                           Long newMaxUsers, Date newScheduleDate, Group newGroup) {
+        if(isUserOwnerOfTask(updaterUser, taskToBeUpdated)) {
+            prepareTaskForEdit(taskToBeUpdated);
+            if(newTitle != null && !newTitle.isEmpty()) {
+                taskToBeUpdated.setTitle(newTitle);
+            }
+            if(newMaxUsers != null && newMaxUsers > 0) {
+                taskToBeUpdated.setParticipantLimit(newMaxUsers);
+            }
+            if(newScheduleDate != null && newScheduleDate.after(Calendar.getInstance().getTime())) {
+                taskToBeUpdated.setScheduleDate(newScheduleDate);
+            }
+            taskToBeUpdated.setDescription(newDescription);
+            taskToBeUpdated.setAssociatedGroup(newGroup);
+            return saveTask(taskToBeUpdated);
+        } else {
+            //User is not owner of task.
+            return null;
+        }
+    }
+
+    private void prepareTaskForEdit(Task task) {
+        System.out.println("Task getting ready for edit.");
+        if(task != null) {
+            try {
+                em.lock(task, LockModeType.PESSIMISTIC_WRITE);
+            } catch (Exception e) {
+                System.out.println("Exception in prepareTaskForEdit: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Merge and lock the database.
+     * @param taskToSave task to be merged.
+     * @return task if merge was successful else null.
+     */
+    private Task saveTask(Task taskToSave) {
+        System.out.println("Trying to save task.");
+        if(taskToSave != null) {
+            try {
+                em.merge(taskToSave);
+                em.lock(taskToSave, LockModeType.NONE);
+                em.flush();
+                return taskToSave;
+            } catch (Exception e) {
+                System.out.println("Exception in saveTask: " + e.getMessage());
+            }
+        }
+        return null;
     }
 }
