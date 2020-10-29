@@ -32,15 +32,12 @@ import lombok.extern.java.Log;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.InvalidKeyException;
-import java.util.List;
-import java.util.logging.Logger;
+
 import javax.annotation.Resource;
-import javax.persistence.Query;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 
-import no.ntnu.mobapp20g6.appsrv.dao.UserDao;
+import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 import no.ntnu.mobapp20g6.appsrv.resources.DatasourceProducer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -102,7 +99,7 @@ public class AuthenticationService {
 
 	// Data class to find user
 	@Inject
-	UserDao userDao;
+	UserDAO userDao;
 
 	/**
 	 *

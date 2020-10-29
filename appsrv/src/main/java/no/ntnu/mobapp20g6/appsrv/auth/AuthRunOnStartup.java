@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import lombok.extern.java.Log;
-import no.ntnu.mobapp20g6.appsrv.dao.UserDao;
+import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
 /**
@@ -24,7 +24,7 @@ public class AuthRunOnStartup {
 	EntityManager em;
 
 	@Inject
-	UserDao userDao;
+	UserDAO userDao;
 
 	@PostConstruct
 	public void init() {

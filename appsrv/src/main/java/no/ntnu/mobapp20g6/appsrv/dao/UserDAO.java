@@ -8,16 +8,12 @@ package no.ntnu.mobapp20g6.appsrv.dao;
 import lombok.extern.java.Log;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 import no.ntnu.mobapp20g6.appsrv.model.User;
-import no.ntnu.mobapp20g6.appsrv.resources.DatasourceProducer;
-
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.security.enterprise.identitystore.PasswordHash;
-import javax.sql.DataSource;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +24,7 @@ import java.util.List;
  */
 @Stateless
 @Log
-public class UserDao {
+public class UserDAO {
 
 	/**
 	 * The application server will inject a EntityManager as a way to
