@@ -3,13 +3,16 @@ package no.ntnu.mobapp20g6.appsrv.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "tasks")
 @Data
@@ -23,6 +26,7 @@ public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="task_id")
     private Long id;
 
 
@@ -30,6 +34,7 @@ public class Task implements Serializable {
         ACTIVE, ARCHIVED
     }
 
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     Status currentStatus = Status.ACTIVE;
 
@@ -59,4 +64,46 @@ public class Task implements Serializable {
         //Owner is not participant
         participantCount = 0;
     }
+
+    // N-1 Owner
+    @ManyToOne
+    @JoinColumn(name = "creator_user_id", referencedColumnName = "user_id")
+    private User creatorUser;
+
+    // N-1 Owner
+    @ManyToOne
+    @JoinColumn(name = "member_group_id", referencedColumnName = "group_id")
+    private Group associatedGroup;
+
+    // 1-1 Owner
+    @OneToOne
+    @JoinColumn(name = "location_id", referencedColumnName = "location_id")
+    private Location location;
+
+    // 1-1 Owner
+    @OneToOne
+    @JoinColumn(name = "picture_id", referencedColumnName = "picture_id")
+    private Picture picture;
+
+
+    // M-N Owner
+    @ManyToMany
+    @JoinTable(name = "task_has_user",
+            joinColumns = @JoinColumn(
+                    name = "task_task_id",
+                    referencedColumnName = "task_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "user_user_id",
+                    referencedColumnName = "user_id"))
+    List<User> users;
+
+
+    public List<User> getUsers() {
+        if (this.users == null) {
+            this.users = new ArrayList<>();
+        }
+        return this.users;
+
+    }
+
 }
