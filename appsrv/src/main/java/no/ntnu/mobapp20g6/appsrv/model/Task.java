@@ -2,6 +2,7 @@ package no.ntnu.mobapp20g6.appsrv.model;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Entity(name = "tasks")
 @Data
+@NoArgsConstructor
 @NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
 @NamedQuery(name = Task.FIND_TASK_BY_ID, query = "SELECT t FROM tasks t WHERE t.id = :id") //TODO Need testing
 public class Task implements Serializable {

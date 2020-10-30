@@ -2,8 +2,10 @@ package no.ntnu.mobapp20g6.appsrv.resources;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
+import no.ntnu.mobapp20g6.appsrv.dao.GroupDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
+import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -26,6 +28,9 @@ public class Service {
 
     @Inject
     UserDAO userDAO;
+
+    @Inject
+    GroupDAO groupDAO;
 
     @Inject
     JsonWebToken principal;
@@ -73,19 +78,23 @@ public class Service {
             @FormParam("maxusers") Long maxUsers,
             @FormParam("scheduledate") Date scheduleDate,
             @FormParam("groupid") Long groupId) {
-        if((title == null || title.isEmpty()) || (scheduleDate.before(Calendar.getInstance().getTime()))) {
+        Group taskGroup = null;
+        if(groupId != null) {
+            taskGroup = groupDAO.getGroupById(groupId);
+        }
+        if(groupId == null || taskGroup != null) {
             Task createdTask = taskDAO.addTask(userDAO.findUserById(principal.getName()),
-                    title, description, maxUsers, scheduleDate, groupId);
+                    title, description, maxUsers, scheduleDate, taskGroup);
             if (createdTask != null) {
                 return Response.ok(createdTask).build();
             } else {
-                //No group with groupId found.
-                System.out.println("No group with id: " + groupId + " found!");
-                return Response.status(Response.Status.NOT_FOUND).build();
+                //Needed parameters missing or date is before today's date.
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
         } else {
-            //Needed parameters missing or date is before today's date.
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            //No group with groupId found.
+            System.out.println("No group with id: " + groupId + " found!");
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 
@@ -127,7 +136,26 @@ public class Service {
             @FormParam("scheduledate") Date scheduleDate,
             @FormParam("groupid") Long groupId,
             @QueryParam("id") Long taskId) {
-
-        return null;
+        if(taskId != null) {
+            Task task = taskDAO.getTaskById(taskId);
+            Group group = groupDAO.getGroupById(groupId);
+            if (task != null) {
+                task = taskDAO.updateTask(userDAO.findUserById(principal.getName()), task, title,
+                        description, maxUsers, scheduleDate, group);
+                if (task != null) {
+                    //Task was successfully changed.
+                    return Response.ok(task).build();
+                } else {
+                    //User is not the owner of the task.
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
+            } else {
+                //No task with taskId found.
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            //taskId was null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 }

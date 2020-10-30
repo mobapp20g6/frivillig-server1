@@ -41,12 +41,12 @@ public class TaskDAO {
      * @param description of the task.
      * @param maxUsers which can join th task
      * @param scheduleDate day the task is scheduled to be done.
-     * @param groupId of group task should be associated with. If null group is public.
+     * @param group the task should be associated with. If null group is public.
      * @return the new task. Null if no task is found with given groupId.
      */
     public Task addTask(User creator, String title, String description,
-                        Long maxUsers, Date scheduleDate, Long groupId) {
-        Task task = createTask(creator, title, description, maxUsers, scheduleDate, groupId);
+                        Long maxUsers, Date scheduleDate, Group group) {
+        Task task = createTask(creator, title, description, maxUsers, scheduleDate, group);
         if(task != null) {
             em.merge(task);
             em.flush();
@@ -63,21 +63,20 @@ public class TaskDAO {
      * @param description of the task.
      * @param maxUsers which can join th task
      * @param scheduleDate day the task is scheduled to be done.
-     * @param groupId of group task should be associated with. If null group is public.
-     * @return the new task. Null if no task is found with given groupId.
+     * @param group the task should be associated with. If null group is public.
+     * @return the new task. Null if title is missing or schedule date is before today's date.
      */
     private Task createTask(User creator, String title, String description,
-                        Long maxUsers, Date scheduleDate, Long groupId) {
-        Group taskGroup = groupDAO.getGroupById(groupId);
-        if(groupId == null) {
-            //Group is public
-            return new Task(title, description, scheduleDate,maxUsers, creator, null);
+                        Long maxUsers, Date scheduleDate, Group group) {
+        if((title == null || title.isEmpty()) || (scheduleDate.before(Calendar.getInstance().getTime()))) {
+            //A task must have title and schedule date which is after today's date.
+            return null;
         } else {
-            if(taskGroup == null) {
-                //If no groups with id was found.
-                return null;
+            if (group == null) {
+                //Group is public
+                return new Task(title, description, scheduleDate, maxUsers, creator, null);
             } else {
-                return new Task(title, description, scheduleDate,maxUsers, creator, taskGroup);
+                return new Task(title, description, scheduleDate, maxUsers, creator, group);
             }
         }
     }
