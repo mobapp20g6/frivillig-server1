@@ -20,9 +20,6 @@ public class TaskDAO {
     @PersistenceContext
     EntityManager em;
 
-    @Inject
-    GroupDAO groupDAO;
-
     public List<Task> getAllTasks() {
         Query query = em.createNamedQuery(Task.FIND_ALL_TASKS);
         return query.getResultList();

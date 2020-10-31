@@ -17,8 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @NamedQuery(name = Group.FIND_GROUP_BY_ID, query = "SELECT g FROM groups g WHERE g.id = :id") //TODO Need testing
+@NamedQuery(name = Group.FIND_ALL_GROUPS, query = "SELECT g FROM groups g" )
 public class Group implements Serializable {
     public static final String FIND_GROUP_BY_ID = "findTaskById";
+    public static final String FIND_ALL_GROUPS = "findAllGroups";
 
     @Id
     @Column(name="group_id")
@@ -70,4 +72,18 @@ public class Group implements Serializable {
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "associatedGroup")
     private List<Task> associatedTasks;
+
+    /**
+     * Constructor for group.
+     * @param tile name of group.
+     * @param description of group
+     * @param originationId
+     * @param creator user which created the group.
+     */
+    public Group(String tile, String description, Long originationId, User creator) {
+        this.name = tile;
+        this.description = description;
+        this.originationId = originationId;
+        this.ownerUser = creator;
+    }
 }

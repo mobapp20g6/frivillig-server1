@@ -1,6 +1,5 @@
 package no.ntnu.mobapp20g6.appsrv.resources;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 import no.ntnu.mobapp20g6.appsrv.dao.GroupDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
@@ -15,7 +14,6 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +42,7 @@ public class Service {
         if(taskList == null || taskList.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } else {
-            return Response.ok(taskDAO.getAllTasks()).build();
+            return Response.ok(taskList).build();
         }
     }
 
@@ -157,5 +155,52 @@ public class Service {
             //taskId was null.
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+    }
+
+    @POST
+    @Path("/creategroup")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response createGroup(
+            @FormParam("title") String title,
+            @FormParam("description") String description,
+            @FormParam("orgid") Long orgId) {
+        if(orgId != null) {
+            //TODO make group with orgId.
+            System.out.println("Trying to make group with orgId: " + orgId + ".");
+            return null;
+        } else {
+            Group group = groupDAO.addGroup(title, description, userDAO.findUserById(principal.getName()));
+            if(group != null) {
+                return Response.ok(group).build();
+            } else {
+                //Title is null or empty.
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+        }
+    }
+
+    @GET
+    @Path("/listgroups")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response listGroups() {
+        List<Group> groupList = groupDAO.getAllGroups();
+        if(groupList == null || groupList.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            return Response.ok(groupList).build();
+        }
+    }
+
+    @POST
+    @Path("/updategroup")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response updateGroup(
+            @FormParam("title") String title,
+            @FormParam("description") String description,
+            @QueryParam("id") Long groupId) {
+        return null;
     }
 }
