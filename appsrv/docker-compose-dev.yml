@@ -35,7 +35,7 @@ services:
       - "traefik.http.services.api.loadbalancer.server.port=8080"
       - "traefik.http.routers.api.rule=Host(`localhost`)"
       - "traefik.http.routers.api.middlewares=api-add-prefix@docker"
-      - "traefik.http.middlewares.api-add-prefix.addprefix.prefix=/appsrv"
+      - "traefik.http.middlewares.api-add-prefix.addprefix.prefix=/appsrv-1.0"
 
   reverse-proxy:
     container_name: frivillig-proxy
