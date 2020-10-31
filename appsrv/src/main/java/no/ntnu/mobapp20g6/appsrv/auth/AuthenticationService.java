@@ -123,6 +123,10 @@ public class AuthenticationService {
 			UsernamePasswordCredential ucred
 				= new UsernamePasswordCredential(exsistingUser.getId(), pwd);
 
+			System.out.println("=== INVOKING REST-AUTH: LOGON ===");
+			System.out.println("- Found user......................: " + exsistingUser.getId());
+			System.out.println("- Found credentials...............: " + ucred.toString());
+
 			CredentialValidationResult result
 				= identityStoreHandler.validate(ucred);
 

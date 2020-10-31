@@ -16,7 +16,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@NamedQuery(name = Group.FIND_GROUP_BY_ID, query = "SELECT g FROM groups g WHERE g.id = :id") //TODO Need testing
 public class Group implements Serializable {
+    public static final String FIND_GROUP_BY_ID = "findTaskById";
 
     @Id
     @Column(name="group_id")
