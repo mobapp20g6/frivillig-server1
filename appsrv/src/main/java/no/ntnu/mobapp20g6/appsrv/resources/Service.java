@@ -1,5 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.resources;
 
+import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
+import no.ntnu.mobapp20g6.appsrv.dao.GroupDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 
