@@ -1,6 +1,5 @@
-package no.ntnu.mobapp20g6.appsrv.resources;
+package no.ntnu.mobapp20g6.appsrv.dao;
 
-import no.ntnu.mobapp20g6.appsrv.dao.ImageDao;
 import no.ntnu.mobapp20g6.appsrv.model.Picture;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;

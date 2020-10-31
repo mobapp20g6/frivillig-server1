@@ -18,7 +18,7 @@ public class Picture implements Serializable {
 
     @Id
     @Column(name="picture_id")
-    private Long id;
+    private String id;
 
     @NotEmpty
     @JsonbTransient
@@ -30,6 +30,12 @@ public class Picture implements Serializable {
     @JsonbTransient
     private String mimeType;
 
+    public Picture(String id, @NotEmpty String filePath, Long fileSize, String mimeType) {
+        this.id = id;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.mimeType = mimeType;
+    }
 
     // 1-1 REF
     @Getter

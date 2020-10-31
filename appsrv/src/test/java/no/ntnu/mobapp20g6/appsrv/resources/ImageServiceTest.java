@@ -1,6 +1,6 @@
 package no.ntnu.mobapp20g6.appsrv.resources;
 
-import no.ntnu.mobapp20g6.appsrv.dao.ImageDao;
+import no.ntnu.mobapp20g6.appsrv.dao.ImageDaoStub;
 import org.junit.jupiter.api.Test;
 import static org.junit.Assert.*;
 import javax.ws.rs.core.Response;

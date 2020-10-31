@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 
 public class ImageService {
 
-    private ImageDao dao;
+    private final ImageDao dao;
     public ImageService(ImageDao dao) {
         this.dao = dao;
     }
