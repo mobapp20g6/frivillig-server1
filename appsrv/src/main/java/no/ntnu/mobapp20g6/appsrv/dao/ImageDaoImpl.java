@@ -1,6 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.dao;
 
 import lombok.extern.java.Log;
+import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Picture;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.resources.DatasourceProducer;
@@ -50,7 +51,7 @@ public class ImageDaoImpl implements ImageDao{
         return found;
     }
 
-    public Task storeImage(Task task, FormDataMultiPart multiPart) {
+    public Task storeImage(Task task, Group group, FormDataMultiPart multiPart) {
         String path = imagePath;
         try {
             List<FormDataBodyPart> images = multiPart.getFields("image");
