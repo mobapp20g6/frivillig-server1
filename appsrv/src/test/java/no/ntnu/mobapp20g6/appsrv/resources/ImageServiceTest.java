@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 import javax.ws.rs.core.Response;
 
 @RunWith(Enclosed.class)
-class ImageServiceTest {
+public class ImageServiceTest {
 
     @Nested
     class GivenGetImage {

@@ -25,6 +25,7 @@ import java.util.UUID;
 
 @Log
 @Stateless
+@ImageDaoProducer
 public class ImageDaoImpl implements ImageDao{
 
     @Resource(lookup = DatasourceProducer.JNDI_NAME)

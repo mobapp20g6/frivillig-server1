@@ -1,6 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.resources;
 
 import no.ntnu.mobapp20g6.appsrv.dao.ImageDao;
+import no.ntnu.mobapp20g6.appsrv.dao.ImageDaoProducer;
 import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Picture;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
@@ -12,7 +13,8 @@ import javax.ws.rs.core.Response;
 public class ImageService {
 
     private final ImageDao dao;
-    public ImageService(ImageDao dao) {
+    @Inject
+    public ImageService(@ImageDaoProducer ImageDao dao) {
         this.dao = dao;
     }
 
