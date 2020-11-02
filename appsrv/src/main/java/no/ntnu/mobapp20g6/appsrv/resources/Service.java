@@ -14,8 +14,10 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 @Path("/service")
 @Stateless
@@ -74,18 +76,25 @@ public class Service {
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("maxusers") Long maxUsers,
-            @FormParam("scheduledate") Date scheduleDate,
+            @FormParam("scheduledate") String scheduleDate,
             @FormParam("groupid") Long groupId) {
         Group taskGroup = null;
         System.out.println("Trying to create task with:" +
                 "\nTitle: " + title + "\nDescription: " + description + "\nMax users: " + maxUsers +
-                "\nSchedule date: " + scheduleDate.toString() + "\nGroup id: " + groupId);
+                "\nSchedule date: " + scheduleDate + "\nGroup id: " + groupId);
+        Date taskDate;
+        try {
+            taskDate = new SimpleDateFormat("dd/MM/yyyy").parse(scheduleDate);
+        } catch (ParseException e) {
+            System.out.println("Exception when trying to parse String to date:\n"+ e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         if(groupId != null) {
             taskGroup = groupDAO.getGroupById(groupId);
         }
         if(groupId == null || taskGroup != null) {
             Task createdTask = taskDAO.addTask(userDAO.findUserById(principal.getName()),
-                    title, description, maxUsers, scheduleDate, taskGroup);
+                    title, description, maxUsers, taskDate, taskGroup);
             if (createdTask != null) {
                 return Response.ok(createdTask).build();
             } else {
@@ -134,15 +143,29 @@ public class Service {
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("maxusers") Long maxUsers,
-            @FormParam("scheduledate") Date scheduleDate,
+            @FormParam("scheduledate") String scheduleDate,
             @FormParam("groupid") Long groupId,
             @QueryParam("id") Long taskId) {
+        System.out.println("Trying to update task with task id: " + taskId);
+        Date taskDate;
+        try {
+            taskDate = new SimpleDateFormat("dd/MM/yyyy").parse(scheduleDate);
+        } catch (ParseException e) {
+            System.out.println("Exception when trying to parse String to date:\n"+ e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         if(taskId != null) {
+            System.out.println("Trying to get task.");
             Task task = taskDAO.getTaskById(taskId);
-            Group group = groupDAO.getGroupById(groupId);
+            Group group = null;
+            if(groupId != null) {
+                System.out.println("Trying to get group.");
+                group = groupDAO.getGroupById(groupId);
+            }
             if (task != null) {
+                System.out.println("Found task with title: " + task.getTitle());
                 task = taskDAO.updateTask(userDAO.findUserById(principal.getName()), task, title,
-                        description, maxUsers, scheduleDate, group);
+                        description, maxUsers, taskDate, group);
                 if (task != null) {
                     //Task was successfully changed.
                     return Response.ok(task).build();
@@ -156,6 +179,7 @@ public class Service {
             }
         } else {
             //taskId was null.
+            System.out.println("TaskId is null!");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }

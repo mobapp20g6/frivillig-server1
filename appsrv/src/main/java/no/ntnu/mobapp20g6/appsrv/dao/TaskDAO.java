@@ -28,7 +28,12 @@ public class TaskDAO {
     public Task getTaskById(Long id) {
         Query query = em.createNamedQuery(Task.FIND_TASK_BY_ID);
         query.setParameter("id", id);
-        return (Task) query.getResultList().get(0);
+        List<Task> queryResult = query.getResultList();
+        if(queryResult.isEmpty()) {
+            return null;
+        } else {
+            return queryResult.get(0);
+        }
     }
 
     /**
@@ -65,7 +70,7 @@ public class TaskDAO {
      */
     private Task createTask(User creator, String title, String description,
                         Long maxUsers, Date scheduleDate, Group group) {
-        if((title == null || title.isEmpty()) || (scheduleDate.before(Calendar.getInstance().getTime()))) {
+        if((title == null || title.isEmpty())) { //  || (scheduleDate.before(Calendar.getInstance().getTime()))
             //A task must have title and schedule date which is after today's date.
             return null;
         } else {
@@ -88,7 +93,8 @@ public class TaskDAO {
         if(isUserOwnerOfTask(removerUser, taskToBeRemoved)) {
             em.remove(taskToBeRemoved);
             em.flush();
-            if(getTaskById(taskToBeRemoved.getId()) == null) {
+            taskToBeRemoved = getTaskById(taskToBeRemoved.getId());
+            if(taskToBeRemoved == null) {
                 //Task was successfully removed.
                 return true;
             } else {
@@ -98,6 +104,8 @@ public class TaskDAO {
             }
         } else {
             //User is not owner of task.
+            System.out.println("This user is not the owner of the task with id: "
+                    + taskToBeRemoved.getId() + " and it was not removed.");
             return false;
         }
     }
@@ -119,6 +127,7 @@ public class TaskDAO {
      */
     public Task updateTask(User updaterUser, Task taskToBeUpdated, String newTitle, String newDescription,
                            Long newMaxUsers, Date newScheduleDate, Group newGroup) {
+        System.out.println("Updating task");
         if(isUserOwnerOfTask(updaterUser, taskToBeUpdated)) {
             prepareTaskForEdit(taskToBeUpdated);
             if(newTitle != null && !newTitle.isEmpty()) {

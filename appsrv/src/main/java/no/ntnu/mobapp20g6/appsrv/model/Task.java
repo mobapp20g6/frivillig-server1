@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
-@NamedQuery(name = Task.FIND_TASK_BY_ID, query = "SELECT t FROM tasks t WHERE t.id = :id") //TODO Need testing
+@NamedQuery(name = Task.FIND_TASK_BY_ID, query = "SELECT t FROM tasks t WHERE t.id = :id")
 public class Task implements Serializable {
     public static final String FIND_ALL_TASKS = "getAllTasks";
     public static final String FIND_TASK_BY_ID = "findTaskById";
@@ -52,12 +50,12 @@ public class Task implements Serializable {
     private String description;
 
     @Column(name = "participant_limit")
-    @Positive
-    @NotEmpty
+    @Min(value = 0L)
+    @NotNull
     private Long participantLimit;
 
     @Column(name = "participant_count")
-    @Positive
+    @Min(value = 0L)
     private Long participantCount;
 
     @PrePersist
@@ -125,9 +123,10 @@ public class Task implements Serializable {
         this.description = description;
         this.scheduleDate = scheduled;
         if(participantLimit == null || participantLimit == 0) {
-            participantLimit = 1L;
+            this.participantLimit = 1L;
+        } else {
+            this.participantLimit = participantLimit;
         }
-        this.participantLimit = participantLimit;
         this.creatorUser = creator;
         this.associatedGroup = associatedGroup;
     }
