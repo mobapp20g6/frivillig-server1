@@ -1,9 +1,6 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 
 import javax.json.bind.annotation.JsonbTransient;
@@ -20,6 +17,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false, exclude={"creatorOfTasks","ownedGroups","assignedTasks"})
 @NamedQueries({
         @NamedQuery(name = User.FIND_ALL_USERS,
                 query = "SELECT p FROM users p ORDER BY p.firstName"),

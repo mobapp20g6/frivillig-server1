@@ -214,9 +214,15 @@ public class AuthenticationService {
 	@Path("currentuser")
 	@RolesAllowed(value = {RoleGroup.USER})
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getCurrentUser() {
-		return em.find(User.class,
-			principal.getName());
+	public Response getCurrentUser() {
+
+		User cUser = em.find(User.class, principal.getName());
+
+		if (cUser != null) {
+			return Response.ok(cUser).build();
+		} else {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
 	}
 
 	/**
