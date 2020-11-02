@@ -5,9 +5,9 @@ import no.ntnu.mobapp20g6.appsrv.model.User;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Stateless
@@ -58,5 +58,61 @@ public class GroupDAO {
         } else {
             return new Group(title, description, null, creator);
         }
+    }
+
+    private boolean isUserOwnerOfGroup(User user, Group group) {
+        return user.equals(group.getOwnerUser());
+    }
+
+    /**
+     * Update the group if the user is the owner.
+     * @param newTitle new title of the group.
+     * @param newDescription new description of the group.
+     * @param groupToBeUpdated group to be updated.
+     * @param updaterUser user trying to update group.
+     * @return updated group if successful. Null if user is not owner or helping method fail.
+     */
+    public Group updateGroup(String newTitle, String newDescription, Group groupToBeUpdated, User updaterUser) {
+        if(isUserOwnerOfGroup(updaterUser, groupToBeUpdated)) {
+            prepareGroupForEdit(groupToBeUpdated);
+            if(newTitle != null && !newTitle.isEmpty()) {
+                groupToBeUpdated.setName(newTitle);
+            }
+            groupToBeUpdated.setDescription(newDescription);
+            return saveGroup(groupToBeUpdated);
+        } else {
+            return null;
+        }
+    }
+
+    private void prepareGroupForEdit(Group group) {
+        System.out.println("Group getting ready for edit.");
+        if(group != null) {
+            try {
+                em.lock(group, LockModeType.PESSIMISTIC_WRITE);
+            } catch (Exception e) {
+                System.out.println("Exception in prepareGroupForEdit: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Merge and lock the database.
+     * @param groupToSave group to be merged.
+     * @return group if merge was successful else null.
+     */
+    private Group saveGroup(Group groupToSave) {
+        System.out.println("Trying to save task.");
+        if(groupToSave != null) {
+            try {
+                em.merge(groupToSave);
+                em.lock(groupToSave, LockModeType.NONE);
+                em.flush();
+                return groupToSave;
+            } catch (Exception e) {
+                System.out.println("Exception in saveGroup: " + e.getMessage());
+            }
+        }
+        return null;
     }
 }

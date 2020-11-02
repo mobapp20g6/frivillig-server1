@@ -201,6 +201,24 @@ public class Service {
             @FormParam("title") String title,
             @FormParam("description") String description,
             @QueryParam("id") Long groupId) {
-        return null;
+        if(groupId != null) {
+            Group group = groupDAO.getGroupById(groupId);
+            if(group != null) {
+                group = groupDAO.updateGroup(title, description, group, userDAO.findUserById(principal.getName()));
+                if(group != null) {
+                    //Group was successfully changed.
+                    return Response.ok(group).build();
+                } else {
+                    //User not owner of group.
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
+            } else {
+                //Group not found.
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            //id was null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 }
