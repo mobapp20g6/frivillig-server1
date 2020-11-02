@@ -123,6 +123,10 @@ public class AuthenticationService {
 			UsernamePasswordCredential ucred
 				= new UsernamePasswordCredential(exsistingUser.getId(), pwd);
 
+			System.out.println("=== INVOKING REST-AUTH: LOGON ===");
+			System.out.println("- Found user......................: " + exsistingUser.getId());
+			System.out.println("- Found credentials...............: " + ucred.toString());
+
 			CredentialValidationResult result
 				= identityStoreHandler.validate(ucred);
 
@@ -210,9 +214,15 @@ public class AuthenticationService {
 	@Path("currentuser")
 	@RolesAllowed(value = {RoleGroup.USER})
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getCurrentUser() {
-		return em.find(User.class,
-			principal.getName());
+	public Response getCurrentUser() {
+
+		User cUser = em.find(User.class, principal.getName());
+
+		if (cUser != null) {
+			return Response.ok(cUser).build();
+		} else {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
 	}
 
 	/**
@@ -267,7 +277,7 @@ public class AuthenticationService {
 	 * @return
 	 */
 	@PUT
-	@Path("changepassword")
+	@Path("changepwd")
 	@RolesAllowed(value = {RoleGroup.USER})
 	public Response changePassword(
 		@QueryParam("email") String emailAccess,
@@ -280,7 +290,7 @@ public class AuthenticationService {
 		if (accessUser == null) {
 			System.out.println("- Access User.......................: " + "<No User>");
 			System.out.println();
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 
 		String id = accessUser.getId();
@@ -302,7 +312,7 @@ public class AuthenticationService {
 				new Object[]{authuser, id});
 			System.out.println("- GroupMembership unsatisfied.......: " + accessUser.getRoleGroups().toString());
 			System.out.println();
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		} else {
 			accessUser.setPassword(hasher.generate(password.toCharArray()));
 			em.merge(accessUser);
