@@ -290,7 +290,7 @@ public class AuthenticationService {
 		if (accessUser == null) {
 			System.out.println("- Access User.......................: " + "<No User>");
 			System.out.println();
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 
 		String id = accessUser.getId();
@@ -312,7 +312,7 @@ public class AuthenticationService {
 				new Object[]{authuser, id});
 			System.out.println("- GroupMembership unsatisfied.......: " + accessUser.getRoleGroups().toString());
 			System.out.println();
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		} else {
 			accessUser.setPassword(hasher.generate(password.toCharArray()));
 			em.merge(accessUser);
