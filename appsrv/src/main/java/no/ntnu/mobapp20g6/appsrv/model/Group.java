@@ -19,7 +19,7 @@ import java.util.List;
 @NamedQuery(name = Group.FIND_GROUP_BY_ID, query = "SELECT g FROM groups g WHERE g.id = :id") //TODO Need testing
 @NamedQuery(name = Group.FIND_ALL_GROUPS, query = "SELECT g FROM groups g" )
 public class Group implements Serializable {
-    public static final String FIND_GROUP_BY_ID = "findTaskById";
+    public static final String FIND_GROUP_BY_ID = "findGroupById";
     public static final String FIND_ALL_GROUPS = "findAllGroups";
 
     @Id

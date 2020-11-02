@@ -77,6 +77,9 @@ public class Service {
             @FormParam("scheduledate") Date scheduleDate,
             @FormParam("groupid") Long groupId) {
         Group taskGroup = null;
+        System.out.println("Trying to create task with:" +
+                "\nTitle: " + title + "\nDescription: " + description + "\nMax users: " + maxUsers +
+                "\nSchedule date: " + scheduleDate.toString() + "\nGroup id: " + groupId);
         if(groupId != null) {
             taskGroup = groupDAO.getGroupById(groupId);
         }
