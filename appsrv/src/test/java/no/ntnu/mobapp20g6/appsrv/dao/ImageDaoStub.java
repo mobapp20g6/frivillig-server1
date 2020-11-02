@@ -31,4 +31,9 @@ public class ImageDaoStub implements ImageDao {
     public Task storeImage(Task t, Group g, FormDataMultiPart data) {
         return EXISTING_TASK;
     }
+
+    @Override
+    public Task testStoreImage(FormDataMultiPart image) {
+        return null;
+    }
 }

@@ -31,4 +31,12 @@ public class ImageService {
         Task updatedTask = dao.storeImage(task, group, image);
         return Response.ok(updatedTask).build();
     }
+    public Response testStoreImage(
+            @FormDataParam("image") FormDataMultiPart image) {
+
+        if (image == null)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        Task updatedTask = dao.testStoreImage(image);
+        return Response.ok(updatedTask).build();
+    }
 }

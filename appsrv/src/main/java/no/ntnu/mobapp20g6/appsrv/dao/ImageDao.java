@@ -11,4 +11,5 @@ public interface ImageDao {
 
     Task storeImage(Task t, Group g, FormDataMultiPart data);
 
+    Task testStoreImage(FormDataMultiPart image);
 }
