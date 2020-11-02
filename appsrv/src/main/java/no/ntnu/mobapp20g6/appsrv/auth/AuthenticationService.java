@@ -277,7 +277,7 @@ public class AuthenticationService {
 	 * @return
 	 */
 	@PUT
-	@Path("changepassword")
+	@Path("changepwd")
 	@RolesAllowed(value = {RoleGroup.USER})
 	public Response changePassword(
 		@QueryParam("email") String emailAccess,
