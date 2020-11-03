@@ -4,15 +4,18 @@ import lombok.extern.java.Log;
 import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Picture;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
+import no.ntnu.mobapp20g6.appsrv.resources.DatasourceProducer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
