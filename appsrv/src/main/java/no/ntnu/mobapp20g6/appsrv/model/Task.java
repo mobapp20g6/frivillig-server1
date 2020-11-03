@@ -90,10 +90,10 @@ public class Task implements Serializable {
     @ManyToMany
     @JoinTable(name = "task_has_user",
             joinColumns = @JoinColumn(
-                    name = "task_task_id",
+                    name = "task_id",
                     referencedColumnName = "task_id"),
             inverseJoinColumns = @JoinColumn(
-                    name = "user_user_id",
+                    name = "user_id",
                     referencedColumnName = "user_id"))
     List<User> users;
 
