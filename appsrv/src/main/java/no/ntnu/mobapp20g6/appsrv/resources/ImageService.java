@@ -43,21 +43,21 @@ public class ImageService {
     @POST
     @Path("setimage")
     @RolesAllowed(value = {RoleGroup.USER})
-    public Response storeImage(
-            @FormDataParam("task") Task task,
-            @FormDataParam("group") Group group,
+    public Response setImage(
+            @FormDataParam("task") Long task,
+            @FormDataParam("group") Long group,
             @FormDataParam("image") FormDataMultiPart image) {
 
         if (image == null || (task == null && group == null))
             return Response.status(Response.Status.BAD_REQUEST).build();
-        Task updatedTask = dao.storeImage(task, group, image);
+        Task updatedTask = dao.setImage(task, group, image);
         return Response.ok(updatedTask).build();
     }
 
     @POST
     @Path("testsetimage")
     public Response testStoreImage(
-            @FormDataParam("image") FormDataMultiPart image) {
+            FormDataMultiPart image) {
 
         if (image == null)
             return Response.status(Response.Status.BAD_REQUEST).build();

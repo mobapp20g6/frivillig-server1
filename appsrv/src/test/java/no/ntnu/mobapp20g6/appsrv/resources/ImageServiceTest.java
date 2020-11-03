@@ -19,7 +19,7 @@ public class ImageServiceTest {
         @Test
         void whenExistingImageIDGiven_thenResponseIsOKAndContainsImage() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.getImage(ImageDaoStub.EXISTING_ID);
+            Response response = imageService.getImage(ImageDaoStub.EXISTING_IMAGE_ID);
             assertEquals(
                     "HTTP Response should be 200",
                     Response.Status.OK.getStatusCode(),
@@ -61,8 +61,8 @@ public class ImageServiceTest {
         void whenCorrectRequest_theResponseIsOKAndContainsTask() {
             ImageService imageService = new ImageService(new ImageDaoStub());
             Response response = imageService.storeImage(
-                    ImageDaoStub.EXISTING_TASK,
-                    ImageDaoStub.EXISTING_GROUP,
+                    ImageDaoStub.EXISTING_TASK_ID,
+                    ImageDaoStub.EXISTING_GROUP_ID,
                     ImageDaoStub.INCOMING_PHOTO);
             assertEquals(
                     "HTTP Response should be 200",
@@ -80,8 +80,8 @@ public class ImageServiceTest {
         void whenMissingImage_theResponseIsBadRequest() {
             ImageService imageService = new ImageService(new ImageDaoStub());
             Response response = imageService.storeImage(
-                    ImageDaoStub.EXISTING_TASK,
-                    ImageDaoStub.EXISTING_GROUP,
+                    ImageDaoStub.EXISTING_TASK_ID,
+                    ImageDaoStub.EXISTING_GROUP_ID,
                     null
             );
             assertEquals(

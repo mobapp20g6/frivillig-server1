@@ -52,22 +52,26 @@ public class ImageDaoImpl implements ImageDao{
         return found;
     }
 
-    public Task storeImage(Task task, Group group, FormDataMultiPart multiPart) {
-        String path = imagePath;
+    public Task setImage(Long taskId, Long groupId, FormDataMultiPart multiPart) {
+        Task task = null;
+        if (multiPart == null || (taskId == null && groupId == null))
+            return task;
+
         try {
             List<FormDataBodyPart> images = multiPart.getFields("image");
-            if (images != null && task != null) {
+            if (images != null) {
                 for (FormDataBodyPart imagePart : images) {
                     InputStream is = imagePart.getEntityAs(InputStream.class);
                     ContentDisposition meta = imagePart.getContentDisposition();
 
                     String iid = UUID.randomUUID().toString();
-                    if (!(Files.exists(Paths.get(path)))) {
-                        Files.createDirectory(Paths.get(path));
+                    if (!(Files.exists(Paths.get(getImagePath())))) {
+                        Files.createDirectory(Paths.get(getImagePath()));
                     }
-                    Long size = Files.copy(is, Paths.get(path, iid));
+                    Long size = Files.copy(is, Paths.get(getImagePath(), iid));
 
                     Picture picture = new Picture(iid, meta.getFileName(), size, meta.getType());
+                    task = em.find(Task.class, taskId);
                     task.setPicture(picture);
                     em.persist(picture);
                     em.persist(task);
