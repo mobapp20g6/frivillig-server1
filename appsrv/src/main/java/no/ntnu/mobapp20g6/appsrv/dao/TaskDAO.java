@@ -26,13 +26,14 @@ public class TaskDAO {
     }
 
     public Task getTaskById(Long id) {
-        Query query = em.createNamedQuery(Task.FIND_TASK_BY_ID);
-        query.setParameter("id", id);
-        List<Task> queryResult = query.getResultList();
-        if(queryResult.isEmpty()) {
+        Task taskToFind = em.find(Task.class, id);
+        if(taskToFind == null) {
+            System.out.println("No task with id: " + id + " found.");
             return null;
         } else {
-            return queryResult.get(0);
+            System.out.println("Task with id: " + id + " found.\n" +
+                    "Task title is: " + taskToFind.getTitle());
+            return taskToFind;
         }
     }
 

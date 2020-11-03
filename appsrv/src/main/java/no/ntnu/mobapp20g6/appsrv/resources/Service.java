@@ -135,7 +135,7 @@ public class Service {
         }
     }
 
-    @POST
+    @PUT
     @Path("/updatetask")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(value = {RoleGroup.USER})
@@ -192,12 +192,7 @@ public class Service {
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("orgid") Long orgId) {
-        if(orgId != null) {
-            //TODO make group with orgId.
-            System.out.println("Trying to make group with orgId: " + orgId + ".");
-            return null;
-        } else {
-            Group group = groupDAO.addGroup(title, description, userDAO.findUserById(principal.getName()));
+        Group group = groupDAO.addGroup(title, description, orgId, userDAO.findUserById(principal.getName()));
             if(group != null) {
                 return Response.ok(group).build();
             } else {
@@ -205,7 +200,6 @@ public class Service {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         }
-    }
 
     @GET
     @Path("/listgroups")
@@ -220,7 +214,7 @@ public class Service {
         }
     }
 
-    @POST
+    @PUT
     @Path("/updategroup")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(value = {RoleGroup.USER})
@@ -234,6 +228,7 @@ public class Service {
                 group = groupDAO.updateGroup(title, description, group, userDAO.findUserById(principal.getName()));
                 if(group != null) {
                     //Group was successfully changed.
+                    System.out.println("Group was successfully changed!");
                     return Response.ok(group).build();
                 } else {
                     //User not owner of group.

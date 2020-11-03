@@ -77,13 +77,13 @@ public class Group implements Serializable {
      * Constructor for group.
      * @param tile name of group.
      * @param description of group
-     * @param originationId
+     * @param orgId
      * @param creator user which created the group.
      */
-    public Group(String tile, String description, Long originationId, User creator) {
+    public Group(String tile, String description, Long orgId, User creator) {
         this.name = tile;
         this.description = description;
-        this.originationId = originationId;
+        this.originationId = orgId;
         this.ownerUser = creator;
     }
 }
