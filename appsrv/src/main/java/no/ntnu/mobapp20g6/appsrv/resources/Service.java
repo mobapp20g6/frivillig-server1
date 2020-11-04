@@ -123,7 +123,7 @@ public class Service {
                     return Response.status(Response.Status.OK).build();
                 } else {
                     //User is not owner of task.
-                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                    return Response.status(Response.Status.FORBIDDEN).build();
                 }
             } else {
                 //No task with id found.
@@ -171,7 +171,7 @@ public class Service {
                     return Response.ok(task).build();
                 } else {
                     //User is not the owner of the task.
-                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                    return Response.status(Response.Status.FORBIDDEN).build();
                 }
             } else {
                 //No task with taskId found.
@@ -205,6 +205,8 @@ public class Service {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
+
+
 
     @POST
     @Path("/creategroup")
@@ -254,7 +256,7 @@ public class Service {
                     return Response.ok(group).build();
                 } else {
                     //User not owner of group.
-                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                    return Response.status(Response.Status.FORBIDDEN).build();
                 }
             } else {
                 //Group not found.
