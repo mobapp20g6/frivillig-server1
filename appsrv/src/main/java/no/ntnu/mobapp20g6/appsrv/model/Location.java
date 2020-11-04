@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity(name = "locations")
 @Data

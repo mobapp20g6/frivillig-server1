@@ -14,7 +14,6 @@
             </DockerEnvVarImpl>
           </list>
         </option>
-        <option name="removeVolumesOnComposeDown" value="true" />
         <option name="commandLineOptions" value="--build" />
         <option name="services">
           <list>
