@@ -206,6 +206,34 @@ public class Service {
         }
     }
 
+    @POST
+    @Path("/listmytasks")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response listMyTasks(
+            @FormParam("ownedtasks") boolean ownedTasks) {
+        List<Task> taskList;
+        if(ownedTasks) {
+            //Listing tasks user made.
+            taskList = taskDAO.getOwnedTasks(userDAO.findUserById(principal.getName()));
+            if(taskList.isEmpty()) {
+                System.out.println("User don't own any tasks or owner was null.");
+                return Response.status(Response.Status.NOT_FOUND).build();
+            } else {
+                return Response.ok(taskList).build();
+            }
+        } else {
+            //Listing tasks user are assigned.
+            taskList = taskDAO.getAssignedTasks(userDAO.findUserById(principal.getName()));
+            if(taskList.isEmpty()) {
+                System.out.println("User are not assigned to any tasks or user was null.");
+                return Response.status(Response.Status.NOT_FOUND).build();
+            } else {
+                return Response.ok(taskList).build();
+            }
+        }
+    }
+
 
 
     @POST

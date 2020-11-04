@@ -11,6 +11,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -218,5 +219,33 @@ public class TaskDAO {
             }
         }
         return false;
+    }
+
+    /**
+     * Return all tasks user is the creator of.
+     * @param user to get created tasks from.
+     * @return tasks user has created.
+     */
+    public List<Task> getOwnedTasks(User user) {
+        if(user != null) {
+            return user.getCreatorOfTasks();
+        } else {
+            System.out.println("User is null in getOwnedTasks!");
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Return all tasks user is assigned to.
+     * @param user to get assigned tasks from.
+     * @return tasks user is assigned to.
+     */
+    public List<Task> getAssignedTasks(User user) {
+        if(user != null) {
+            return user.getAssignedTasks();
+        } else {
+            System.out.println("User is null in getAssignedTasks!");
+            return Collections.emptyList();
+        }
     }
 }

@@ -1,6 +1,5 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,12 +13,9 @@ import java.util.List;
 
 @Entity(name = "groups")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@NamedQuery(name = Group.FIND_GROUP_BY_ID, query = "SELECT g FROM groups g WHERE g.id = :id")
 @NamedQuery(name = Group.FIND_ALL_GROUPS, query = "SELECT g FROM groups g" )
 public class Group implements Serializable {
-    public static final String FIND_GROUP_BY_ID = "findGroupById";
     public static final String FIND_ALL_GROUPS = "findAllGroups";
 
     @Id
