@@ -333,7 +333,7 @@ public class AuthenticationService {
 
 					case NOT_VALIDATED:
 						//FIXME: Currently here seperate the return code from the others
-                        // The database or something went horribly wrong
+						// The database or something went horribly wrong
 						state = Response.Status.SERVICE_UNAVAILABLE;
 						break;
 				}
