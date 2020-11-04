@@ -179,4 +179,44 @@ public class TaskDAO {
         }
         return null;
     }
+
+    /**
+     * Add a user to the task.
+     * @param user to add to the task
+     * @param task to add user too.
+     * @return true if user was successfully added to task.
+     */
+    public boolean addUserToTask(User user, Task task) {
+        boolean userWasAdded = false;
+        if(task.getParticipantCount() >= task.getParticipantLimit()) {
+            System.out.println("Task is full. So " + user.getFirstName() + " can't join " + task.getTitle() + ".");
+        } else if(isUserInTask(user, task)) {
+            System.out.println("User " + user.getFirstName() + " is already in task " + task.getTitle() + ".");
+        } else {
+            prepareTaskForEdit(task);
+            task.getUsers().add(user);
+            if(saveTask(task) != null) {
+                System.out.println("User was successfully added to task.");
+                userWasAdded = true;
+            } else {
+                System.out.println("Something went wrong trying to save task!");
+            }
+        }
+        return userWasAdded;
+    }
+
+    /**
+     * Checks if a user is in a task.
+     * @param user to check if already in the task.
+     * @param task to check if user is in.
+     * @return true if user is in task.
+     */
+    private boolean isUserInTask(User user, Task task) {
+        for(User userInTask:task.getUsers()) {
+            if(userInTask == user) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -185,6 +185,28 @@ public class Service {
     }
 
     @POST
+    @Path("/jointask")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response joinTask(
+            @FormParam("id") Long taskId) {
+        if(taskId != null) {
+            Task task = taskDAO.getTaskById(taskId);
+            if(task != null) {
+                if(taskDAO.addUserToTask(userDAO.findUserById(principal.getName()), task)) {
+                    return Response.ok().build();
+                } else {
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    @POST
     @Path("/creategroup")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(value = {RoleGroup.USER})
