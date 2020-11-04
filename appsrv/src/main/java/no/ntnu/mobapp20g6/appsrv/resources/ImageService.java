@@ -41,20 +41,6 @@ public class ImageService {
     }
 
     @POST
-    @Path("setimage")
-    @RolesAllowed(value = {RoleGroup.USER})
-    public Response setImage(
-            @FormDataParam("task") Long task,
-            @FormDataParam("group") Long group,
-            @FormDataParam("image") FormDataMultiPart image) {
-
-        if (image == null || (task == null && group == null))
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        Task updatedTask = dao.setImage(task, group, image);
-        return Response.ok(updatedTask).build();
-    }
-
-    @POST
     @Path("testsetimage")
     public Response testStoreImage(
             FormDataMultiPart image) {
@@ -62,6 +48,30 @@ public class ImageService {
         if (image == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
         Task updatedTask = dao.testStoreImage(image);
+        return Response.ok(updatedTask).build();
+    }
+
+    @POST
+    @Path("setgrouplogo")
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response setGroupLogo(
+            @FormDataParam("groupid") Long groupID,
+            @FormDataParam("image") FormDataMultiPart image) {
+        if (groupID == null || image == null)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        Group updatedGroup = dao.setGroupLogo(groupID, image);
+        return Response.ok(updatedGroup).build();
+    }
+
+    @POST
+    @Path("settaskimage")
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response setTaskImage(
+            @FormDataParam("taskid")Long taskID,
+            @FormDataParam("image") FormDataMultiPart image) {
+        if (taskID == null || image == null)
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        Task updatedTask = dao.setTaskImage(taskID, image);
         return Response.ok(updatedTask).build();
     }
 }

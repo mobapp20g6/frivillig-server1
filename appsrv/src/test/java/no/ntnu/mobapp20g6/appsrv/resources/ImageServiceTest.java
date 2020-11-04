@@ -1,6 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.resources;
 
 import no.ntnu.mobapp20g6.appsrv.dao.ImageDaoStub;
+import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Picture;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import org.junit.experimental.runners.Enclosed;
@@ -56,18 +57,27 @@ public class ImageServiceTest {
     }
 
     @Nested
-    class GivenStoreImage {
+    class GivenSetTaskImage {
         @Test
-        void whenCorrectRequest_theResponseIsOKAndContainsTask() {
+        void whenCorrectRequest_thenResponseIsOk() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.setImage(
+            Response response = imageService.setTaskImage(
                     ImageDaoStub.EXISTING_TASK_ID,
-                    ImageDaoStub.EXISTING_GROUP_ID,
-                    ImageDaoStub.INCOMING_PHOTO);
+                    ImageDaoStub.INCOMING_PHOTO
+            );
             assertEquals(
                     "HTTP Response should be 200",
                     Response.Status.OK.getStatusCode(),
                     response.getStatus()
+            );
+        }
+
+        @Test
+        void whenCorrectRequest_thenResponseContainsTask() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setTaskImage(
+                    ImageDaoStub.EXISTING_TASK_ID,
+                    ImageDaoStub.INCOMING_PHOTO
             );
             assertEquals(
                     "HTTP Response should contain Task",
@@ -77,10 +87,82 @@ public class ImageServiceTest {
         }
 
         @Test
-        void whenMissingImage_theResponseIsBadRequest() {
+        void whenMissingTaskID_thenResponseIsBadRequest() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.setImage(
+            Response response = imageService.setTaskImage(
+                    null,
+                    ImageDaoStub.INCOMING_PHOTO
+            );
+            assertEquals(
+                    "HTTP Response should be 400",
+                    Response.Status.BAD_REQUEST.getStatusCode(),
+                    response.getStatus()
+            );
+        }
+
+        @Test
+        void whenMissingImage_thenResponseIsBadRequest() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setTaskImage(
                     ImageDaoStub.EXISTING_TASK_ID,
+                    null
+            );
+            assertEquals(
+                    "HTTP Response should be 400",
+                    Response.Status.BAD_REQUEST.getStatusCode(),
+                    response.getStatus()
+            );
+        }
+    }
+
+    @Nested
+    class GivenSetGroupLogo {
+        @Test
+        void whenCorrectRequest_thenResponseIsOk() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setGroupLogo(
+                    ImageDaoStub.EXISTING_GROUP_ID,
+                    ImageDaoStub.INCOMING_PHOTO
+            );
+            assertEquals(
+                    "HTTP Response should be 200",
+                    Response.Status.OK.getStatusCode(),
+                    response.getStatus()
+            );
+        }
+
+        @Test
+        void whenCorrectRequest_thenResponseContainsGroup() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setGroupLogo(
+                    ImageDaoStub.EXISTING_GROUP_ID,
+                    ImageDaoStub.INCOMING_PHOTO
+            );
+            assertEquals(
+                    "HTTP Response should contain Group",
+                    Group.class,
+                    response.getEntity().getClass()
+            );
+        }
+
+        @Test
+        void whenMissingGroupID_thenResponseIsBadRequest() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setGroupLogo(
+                    null,
+                    ImageDaoStub.INCOMING_PHOTO
+            );
+            assertEquals(
+                    "HTTP Response should be 400",
+                    Response.Status.BAD_REQUEST.getStatusCode(),
+                    response.getStatus()
+            );
+        }
+
+        @Test
+        void whenMissingImage_thenResponseIsBadRequest() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setGroupLogo(
                     ImageDaoStub.EXISTING_GROUP_ID,
                     null
             );
@@ -91,18 +173,6 @@ public class ImageServiceTest {
             );
         }
 
-        @Test
-        void whenMissingBothTaskAndGroup_thenResponseIsBadRequest() {
-            ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.setImage(
-                    null,
-                    null,
-                    ImageDaoStub.INCOMING_PHOTO
-            );
-            assertEquals(
-                    "HTTP Response should be 400",
-                    Response.Status.BAD_REQUEST.getStatusCode(),
-                    response.getStatus());
-        }
+
     }
 }

@@ -23,14 +23,21 @@ public class ImageDaoStub implements ImageDao {
     }
 
     @Override
-    public Task setImage(Long t, Long g, FormDataMultiPart data) {
-        Task fakeTask = new Task();
-        fakeTask.setId(EXISTING_TASK_ID);
-        return fakeTask;
+    public Task testStoreImage(FormDataMultiPart image) {
+        return null;
     }
 
     @Override
-    public Task testStoreImage(FormDataMultiPart image) {
-        return null;
+    public Group setGroupLogo(Long groupId, FormDataMultiPart data) {
+        Group fakeGroup = new Group();
+        fakeGroup.setId(EXISTING_GROUP_ID);
+        return fakeGroup;
+    }
+
+    @Override
+    public Task setTaskImage(Long taskID, FormDataMultiPart data) {
+        Task fakeTask = new Task();
+        fakeTask.setId(EXISTING_TASK_ID);
+        return fakeTask;
     }
 }
