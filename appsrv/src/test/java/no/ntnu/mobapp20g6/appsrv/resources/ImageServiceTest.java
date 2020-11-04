@@ -60,7 +60,7 @@ public class ImageServiceTest {
         @Test
         void whenCorrectRequest_theResponseIsOKAndContainsTask() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.storeImage(
+            Response response = imageService.setImage(
                     ImageDaoStub.EXISTING_TASK_ID,
                     ImageDaoStub.EXISTING_GROUP_ID,
                     ImageDaoStub.INCOMING_PHOTO);
@@ -79,7 +79,7 @@ public class ImageServiceTest {
         @Test
         void whenMissingImage_theResponseIsBadRequest() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.storeImage(
+            Response response = imageService.setImage(
                     ImageDaoStub.EXISTING_TASK_ID,
                     ImageDaoStub.EXISTING_GROUP_ID,
                     null
@@ -94,7 +94,7 @@ public class ImageServiceTest {
         @Test
         void whenMissingBothTaskAndGroup_thenResponseIsBadRequest() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.storeImage(
+            Response response = imageService.setImage(
                     null,
                     null,
                     ImageDaoStub.INCOMING_PHOTO
