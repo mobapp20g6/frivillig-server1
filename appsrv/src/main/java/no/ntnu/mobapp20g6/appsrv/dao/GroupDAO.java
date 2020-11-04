@@ -116,4 +116,49 @@ public class GroupDAO {
         }
         return null;
     }
+
+    /**
+     * Add a user the a group.
+     * @param groupOwner owner of the group.
+     * @param userToBeAdded user to be added to the group.
+     * @param group to add user to.
+     * @return true if user was successfully added to the group.
+     */
+    public boolean addUserToGroup(User groupOwner, User userToBeAdded, Group group) {
+        if(groupOwner != null && userToBeAdded != null && group != null) {
+            if (groupOwner == group.getOwnerUser()) {
+                if(!isUserInGroup(userToBeAdded, group)) {
+                    prepareGroupForEdit(group);
+                    group.getMemberUsers().add(userToBeAdded);
+                    saveGroup(group);
+                    //Returns true if user was successfully added to the group.
+                    return isUserInGroup(userToBeAdded, group);
+                } else {
+                    System.out.println("User is already member of the group.");
+                }
+            } else {
+                System.out.println("User is not owner of group!");
+            }
+        }
+        //User was not added to group.
+        return false;
+    }
+
+    /**
+     * Checks if a user is in a group.
+     * @param user to see if is in group.
+     * @param group to see if user is in.
+     * @return true if user is in group.
+     */
+    private boolean isUserInGroup(User user, Group group) {
+        List<User> groupMembers = group.getMemberUsers();
+        for (User userInGroup:groupMembers) {
+            if(userInGroup == user) {
+                //User is in group.
+                return true;
+            }
+        }
+        //User is not in group.
+        return false;
+    }
 }

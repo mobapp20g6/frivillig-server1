@@ -6,6 +6,7 @@ import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
+import no.ntnu.mobapp20g6.appsrv.model.User;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.annotation.security.RolesAllowed;
@@ -292,6 +293,37 @@ public class Service {
             }
         } else {
             //id was null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    @POST
+    @Path("/addusertogroup")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response addUserToGroup(
+            @FormParam("userid") String userId,
+            @QueryParam("groupid") Long groupId) {
+        if(userId != null && groupId != null) {
+            User userToBeAdded = userDAO.findUserById(userId);
+            Group group = groupDAO.getGroupById(groupId);
+            if(userToBeAdded != null && group != null) {
+                if(groupDAO.addUserToGroup(userDAO.findUserById(principal.getName()), userToBeAdded, group)) {
+                    return Response.ok().build();
+                } else {
+                    //This should only happen if user is already in group.
+                    //But can also happen if user trying to add is not owner of group
+                    //Or method failed to add user to group.
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+            } else {
+                System.out.println("User and/or group was not found:\n" +
+                        "User id: " + userId + "\n" +
+                        "Group id: " + groupId);
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            System.out.println("userId or groupId was null.");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
