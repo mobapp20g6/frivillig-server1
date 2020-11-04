@@ -1,17 +1,25 @@
 package no.ntnu.mobapp20g6.appsrv.auth;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
 import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- *
- * @author mikael
- */
 @Entity
 @Table(name = "rolegroups")
 @Data
@@ -36,7 +44,6 @@ public class RoleGroup implements Serializable {
 	/**
 	 * CROSS-JOIN - REFERENCE *
 	 */
-	@JsonbTransient
 	@Getter
 	@ManyToMany
 	@JoinTable(name = "user_has_rolegroup",
@@ -46,6 +53,7 @@ public class RoleGroup implements Serializable {
 		inverseJoinColumns = @JoinColumn(
 			name = "user_id",
 			referencedColumnName = "user_id"))
+	@JsonbTransient
 	List<User> users;
 
 	public RoleGroup(String name) {
