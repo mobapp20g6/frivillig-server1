@@ -14,10 +14,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -79,17 +76,21 @@ public class ImageService {
         return Response.ok(updatedTask).build();
     }
 
-    public Response getImage(String name, int width) {
-        if (name == null) {
+    @GET
+    @Path("getimage")
+    @Produces("image/jpeg")
+    public Response getImage(@QueryParam("name") String id,
+                             @QueryParam("width") int width) {
+        if (id == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        Picture picture = dao.getImage(name);
+        Picture picture = dao.getImage(id);
         if (picture == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         StreamingOutput result = os -> {
-            java.nio.file.Path image = Paths.get(getImagePath(), name);
+            java.nio.file.Path image = Paths.get(getImagePath(), id);
             if (width == 0) {
                 Files.copy(image, os);
                 os.flush();

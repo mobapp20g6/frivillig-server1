@@ -7,15 +7,12 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 public class ImageDaoStub implements ImageDao {
 
-    public static final Long EXISTING_IMAGE_ID = 1L;
-    public static final Long NOT_EXISTING_ID = 2L;
-    public static final Long BAD_ID = null;
-    public static final Long EXISTING_TASK_ID = 3L;
-    public static final Long EXISTING_GROUP_ID = 4L;
+    public static final String EXISTING_IMAGE_ID = "image";
+    public static final String NOT_EXISTING_IMAGE_ID = "noImage";
+    public static final Long EXISTING_TASK_ID = 1L;
+    public static final Long EXISTING_GROUP_ID = 3L;
     public static final FormDataMultiPart INCOMING_PHOTO = new FormDataMultiPart();
-    public static final String EXISTING_IMAGE_NAME = "image";
     public static final int INCOMING_PHOTO_WIDTH_NOT_GIVEN = 0;
-    public static final String NOT_EXISTING_IMAGE_NAME = "noImage";
 
     @Override
     public Task testStoreImage(FormDataMultiPart image) {
@@ -37,8 +34,8 @@ public class ImageDaoStub implements ImageDao {
     }
 
     @Override
-    public Picture getImage(String name) {
-        if (EXISTING_IMAGE_NAME.equals(name))
+    public Picture getImage(String id) {
+        if (EXISTING_IMAGE_ID.equals(id))
             return new Picture();
         return null;
     }

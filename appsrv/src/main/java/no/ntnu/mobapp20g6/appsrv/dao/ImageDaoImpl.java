@@ -49,10 +49,6 @@ public class ImageDaoImpl implements ImageDao{
         if (multiPart == null) {
             return null;
         }
-        Task task = em.find(Task.class, multiPart);
-        if (task == null) {
-            return null;
-        }
         List<FormDataBodyPart> images = multiPart.getFields(FORM_DATA_KEY);
         try {
             if (images != null) {
@@ -67,7 +63,6 @@ public class ImageDaoImpl implements ImageDao{
                     Long size = Files.copy(is, Paths.get(getImagePath(), iid));
 
                     Picture picture = new Picture(iid, meta.getFileName(), size, meta.getType());
-                    task.setPicture(picture);
                     em.persist(picture);
                     em.flush();
                 }
@@ -75,7 +70,7 @@ public class ImageDaoImpl implements ImageDao{
         } catch (IOException ioe) {
             log.log(Level.INFO, ioe.getMessage());
         }
-        return task;
+        return new Task();
     }
 
     @Override
@@ -147,10 +142,10 @@ public class ImageDaoImpl implements ImageDao{
     }
 
     @Override
-    public Picture getImage(String name) {
-        if (name == null) return null;
+    public Picture getImage(String id) {
+        if (id == null) return null;
 
-        Picture picture = em.find(Picture.class,name);
+        Picture picture = em.find(Picture.class,id);
         if (picture == null) return null;
 
         em.refresh(picture);

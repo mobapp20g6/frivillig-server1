@@ -13,5 +13,5 @@ public interface ImageDao {
 
     Task setTaskImage(Long taskID, FormDataMultiPart data);
 
-    Picture getImage(String name);
+    Picture getImage(String id);
 }

@@ -26,7 +26,7 @@ public class ImageServiceTest {
         void whenCorrectRequest_thenResponseIsOK() {
             ImageService imageService = new ImageService(new ImageDaoStub());
             Response response = imageService.getImage(
-                    ImageDaoStub.EXISTING_IMAGE_NAME,
+                    ImageDaoStub.EXISTING_IMAGE_ID,
                     ImageDaoStub.INCOMING_PHOTO_WIDTH_NOT_GIVEN
             );
             assertEquals(
@@ -37,7 +37,7 @@ public class ImageServiceTest {
         }
 
         @Test
-        void whenNameNotGiven_thenResponseIsBadRequest() {
+        void whenIDNotGiven_thenResponseIsBadRequest() {
             ImageService imageService = new ImageService(new ImageDaoStub());
             Response response = imageService.getImage(
                     null,
@@ -54,7 +54,7 @@ public class ImageServiceTest {
         void whenPictureDoesNotExist_thenResponseIsNotFound() {
             ImageService imageService = new ImageService(new ImageDaoStub());
             Response response = imageService.getImage(
-                    ImageDaoStub.NOT_EXISTING_IMAGE_NAME,
+                    ImageDaoStub.NOT_EXISTING_IMAGE_ID,
                     ImageDaoStub.INCOMING_PHOTO_WIDTH_NOT_GIVEN
             );
             assertEquals(
