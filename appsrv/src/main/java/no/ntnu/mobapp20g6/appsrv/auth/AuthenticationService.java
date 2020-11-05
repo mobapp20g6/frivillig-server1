@@ -102,7 +102,6 @@ public class AuthenticationService {
 	UserDAO userDao;
 
 	/**
-	 *
 	 * @param email
 	 * @param pwd
 	 * @param request
@@ -111,9 +110,9 @@ public class AuthenticationService {
 	@POST
 	@Path("login")
 	public Response login(
-		@FormParam("email") @NotBlank String email,
-		@FormParam("pwd") @NotBlank String pwd,
-		@Context HttpServletRequest request) {
+			@FormParam("email") @NotBlank String email,
+			@FormParam("pwd") @NotBlank String pwd,
+			@Context HttpServletRequest request) {
 		System.out.println("=== INVOKING REST-AUTH: LOGON ===");
 		System.out.print("Query parameters: email:" + email + ", password:" + pwd);
 
@@ -121,37 +120,36 @@ public class AuthenticationService {
 
 		if (!(exsistingUser == null)) {
 			UsernamePasswordCredential ucred
-				= new UsernamePasswordCredential(exsistingUser.getId(), pwd);
+					= new UsernamePasswordCredential(exsistingUser.getId(), pwd);
 
 			System.out.println("=== INVOKING REST-AUTH: LOGON ===");
 			System.out.println("- Found user......................: " + exsistingUser.getId());
-			System.out.println("- Found credentials...............: " + ucred.toString());
+			System.out.println("- Found credentials...............: " + ucred.getCaller());
 
 			CredentialValidationResult result
-				= identityStoreHandler.validate(ucred);
+					= identityStoreHandler.validate(ucred);
 
 			if (result.getStatus() == CredentialValidationResult.Status.VALID) {
 				String token = issueToken(result.getCallerPrincipal().getName(),
-					result.getCallerGroups(), request);
+						result.getCallerGroups(), request);
 
 				System.out.println("=== INVOKING REST-AUTH: LOGON ===");
 				System.out.println("- Logged on with ID...............: " + exsistingUser.getId());
 				System.out.println();
 				return Response
-					.ok()
-					.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-					.build();
+						.ok()
+						.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+						.build();
 			}
 		}
 		System.out.println("=== INVOKING REST-AUTH: LOGON ===");
 		System.out.println("- Unable to logon..................: " + email);
 
 		return Response.status(Response.Status.UNAUTHORIZED)
-			.build();
+				.build();
 	}
 
 	/**
-	 *
 	 * @param name
 	 * @param groups
 	 * @param request
@@ -162,19 +160,19 @@ public class AuthenticationService {
 			Date now = new Date();
 			Date expiration = Date.from(LocalDateTime.now().plusDays(1L).atZone(ZoneId.systemDefault()).toInstant());
 			JwtBuilder jb = Jwts.builder()
-				.setHeaderParam("typ", "JWT")
-				.setHeaderParam("kid", "abc-1234567890")
-				.setSubject(name)
-				.setId("a-123")
-				//.setIssuer(issuer)
-				.claim("iss", issuer)
-				.setIssuedAt(now)
-				.setExpiration(expiration)
-				.claim("upn", name)
-				.claim("groups", groups)
-				.claim("aud", "aud")
-				.claim("auth_time", now)
-				.signWith(keyService.getPrivate());
+					.setHeaderParam("typ", "JWT")
+					.setHeaderParam("kid", "abc-1234567890")
+					.setSubject(name)
+					.setId("a-123")
+					//.setIssuer(issuer)
+					.claim("iss", issuer)
+					.setIssuedAt(now)
+					.setExpiration(expiration)
+					.claim("upn", name)
+					.claim("groups", groups)
+					.claim("aud", "aud")
+					.claim("auth_time", now)
+					.signWith(keyService.getPrivate());
 			return jb.compact();
 		} catch (InvalidKeyException t) {
 			log.log(Level.SEVERE, "Failed to create token", t);
@@ -207,26 +205,18 @@ public class AuthenticationService {
 	}
 
 	/**
-	 *
 	 * @return
 	 */
 	@GET
 	@Path("currentuser")
 	@RolesAllowed(value = {RoleGroup.USER})
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCurrentUser() {
-
-		User cUser = em.find(User.class, principal.getName());
-
-		if (cUser != null) {
-			return Response.ok(cUser).build();
-		} else {
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
+	public User getCurrentUser() {
+		return em.find(User.class,
+				principal.getName());
 	}
 
 	/**
-	 *
 	 * @param email
 	 * @param role
 	 * @return
@@ -249,7 +239,6 @@ public class AuthenticationService {
 	}
 
 	/**
-	 *
 	 * @param email
 	 * @param role
 	 * @return
@@ -270,9 +259,9 @@ public class AuthenticationService {
 	}
 
 	/**
-	 *
-	 * @param emailAccess
-	 * @param password
+	 * @param emailAccess Email address of user to change password
+	 * @param newPasswd New password
+	 * @param oldPasswd Old Password (not required for admins)
 	 * @param sc
 	 * @return
 	 */
@@ -280,45 +269,82 @@ public class AuthenticationService {
 	@Path("changepwd")
 	@RolesAllowed(value = {RoleGroup.USER})
 	public Response changePassword(
-		@QueryParam("email") String emailAccess,
-		@QueryParam("pwd") String password,
-		@Context SecurityContext sc) {
+			@QueryParam("email") String emailAccess,
+			@QueryParam("pwd") String newPasswd,
+			@QueryParam("oldpwd") String oldPasswd,
+			@Context SecurityContext sc) {
 		System.out.println("=== INVOKING REST-AUTH: CHANGE PASSWORD ===");
-		System.out.print("Query parameters: email:" + emailAccess + ", role:" + password);
+		System.out.print("Query parameters: email:" + emailAccess + ", role:" + newPasswd);
 
+		if (emailAccess == null || newPasswd == null) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+
+		}
 		User accessUser = userDao.findUserByEmail(emailAccess);
 		if (accessUser == null) {
 			System.out.println("- Access User.......................: " + "<No User>");
 			System.out.println();
-			return Response.status(Response.Status.UNAUTHORIZED).build();
+			return Response.status(Response.Status.FORBIDDEN).build();
 		}
+
 
 		String id = accessUser.getId();
 		System.out.println("=== INVOKING REST-AUTH: CHANGE PASSWORD ===");
 		System.out.println("- Access User.......................: " + id);
 
+		Boolean authorizedToChange = false;
+
+		// The user initiating the password change request (aka the caller)
 		String authuser = sc.getUserPrincipal() != null ? sc.getUserPrincipal().getName() : null;
 
-		if ((password == null || password.length() < 3)) {
+		Response.Status state = Response.Status.BAD_REQUEST;
+
+		if ((newPasswd == null || newPasswd.length() < 3)) {
 			log.log(Level.SEVERE, " #1 Failed to change password on u {0}", id);
-			System.out.println("- Password unsatisfied..............: " + password);
+			System.out.println("- Password unsatisfied..............: " + newPasswd);
 			System.out.println();
-			return Response.status(Response.Status.BAD_REQUEST).build();
+		} else {
+			// Admin rolegroup has permission to change password for other users
+			if (sc.isUserInRole(RoleGroup.ADMIN)) {
+				state = Response.Status.OK;
+				authorizedToChange = true;
+
+				// 1. Verify caller has RoleGroup.USER
+				// 2. Verify caller IS SAME user as will change password to
+				// 3, Verify that caller has entered old password (admins shall never req usr old passwd!)
+			} else if (sc.isUserInRole(RoleGroup.USER) && authuser.compareToIgnoreCase(id) == 0  && oldPasswd != null) {
+				CredentialValidationResult result = identityStoreHandler.validate(new UsernamePasswordCredential(id, oldPasswd));
+
+				switch (result.getStatus()) {
+					case VALID:
+						authorizedToChange = true;
+						state = Response.Status.OK;
+						break;
+
+					case INVALID:
+						state = Response.Status.FORBIDDEN;
+						break;
+
+					case NOT_VALIDATED:
+						//FIXME: Currently here seperate the return code from the others
+						// The database or something went horribly wrong
+						state = Response.Status.SERVICE_UNAVAILABLE;
+						break;
+				}
+			} else {
+				state = Response.Status.UNAUTHORIZED;
+			}
 		}
 
-		if (authuser.compareToIgnoreCase(id) != 0 && !sc.isUserInRole(RoleGroup.ADMIN)) {
-			log.log(Level.SEVERE,
-				"#2 No admin access for {0}. Failed to change password on u {1}",
-				new Object[]{authuser, id});
-			System.out.println("- GroupMembership unsatisfied.......: " + accessUser.getRoleGroups().toString());
-			System.out.println();
-			return Response.status(Response.Status.UNAUTHORIZED).build();
-		} else {
-			accessUser.setPassword(hasher.generate(password.toCharArray()));
+		if (authorizedToChange) {
+			accessUser.setPassword(hasher.generate(newPasswd.toCharArray()));
 			em.merge(accessUser);
-			System.out.println("- Password updated..................: " + password);
+			System.out.println("REST-AUTH: Password changed for user " + emailAccess);
+			System.out.println("- Password updated..................: " + newPasswd);
 			System.out.println();
-			return Response.ok().build();
+			state = Response.Status.fromStatusCode(200);
 		}
+
+		return Response.status(state).build();
 	}
 }

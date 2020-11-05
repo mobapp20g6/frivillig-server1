@@ -11,10 +11,6 @@ import lombok.extern.java.Log;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
-/**
- *
- * @author mikael
- */
 @Singleton
 @Startup
 @Log

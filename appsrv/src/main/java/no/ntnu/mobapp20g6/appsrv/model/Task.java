@@ -4,8 +4,25 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,10 +106,10 @@ public class Task implements Serializable {
     @ManyToMany
     @JoinTable(name = "task_has_user",
             joinColumns = @JoinColumn(
-                    name = "task_task_id",
+                    name = "task_id",
                     referencedColumnName = "task_id"),
             inverseJoinColumns = @JoinColumn(
-                    name = "user_user_id",
+                    name = "user_id",
                     referencedColumnName = "user_id"))
     List<User> users;
 
