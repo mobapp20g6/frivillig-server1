@@ -1,10 +1,31 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 
 import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -102,16 +123,16 @@ public class User implements Serializable {
     private List<Group> ownedGroups;
 
     // M-N REF
-    @JsonbTransient
     @Getter
     @ManyToMany
     @JoinTable(name = "task_has_user",
             joinColumns = @JoinColumn(
-                    name = "task_task_id",
-                    referencedColumnName = "task_id"),
+                    name = "user_id",
+                    referencedColumnName = "user_id"),
             inverseJoinColumns = @JoinColumn(
-                    name = "user_user_id",
-                    referencedColumnName = "user_id"))
+            name = "task_id",
+            referencedColumnName = "task_id"))
+    @JsonbTransient
     List<Task> assignedTasks;
 
 
