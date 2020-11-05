@@ -226,6 +226,7 @@ public class Service {
         } else {
             //Listing tasks user are assigned.
             taskList = taskDAO.getAssignedTasks(userDAO.findUserById(principal.getName()));
+            System.out.println("User id is: " + principal.getName());
             if(taskList.isEmpty()) {
                 System.out.println("User are not assigned to any tasks or user was null.");
                 return Response.status(Response.Status.NOT_FOUND).build();
@@ -303,7 +304,7 @@ public class Service {
     @RolesAllowed(value = {RoleGroup.USER})
     public Response addUserToGroup(
             @FormParam("userid") String userId,
-            @QueryParam("groupid") Long groupId) {
+            @FormParam("groupid") Long groupId) {
         if(userId != null && groupId != null) {
             User userToBeAdded = userDAO.findUserById(userId);
             Group group = groupDAO.getGroupById(groupId);
