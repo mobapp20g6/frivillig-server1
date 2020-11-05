@@ -33,8 +33,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
+//@NamedQuery(name = Task.FIND_TASKS_ASSIGNED_TO, query = "SELECT t FROM tasks t WHERE t. LIKE :userId")
 public class Task implements Serializable {
     public static final String FIND_ALL_TASKS = "getAllTasks";
+    //public static final String FIND_TASKS_ASSIGNED_TO = "findTasksAssignedTo";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -112,7 +114,7 @@ public class Task implements Serializable {
             inverseJoinColumns = @JoinColumn(
                     name = "user_id",
                     referencedColumnName = "user_id"))
-    List<User> users;
+    private List<User> users;
 
 
     public List<User> getUsers() {
@@ -120,7 +122,10 @@ public class Task implements Serializable {
             this.users = new ArrayList<>();
         }
         return this.users;
+    }
 
+    public void addToParticipantCount(int participantsToAdd) {
+        participantCount += participantsToAdd;
     }
 
     /**

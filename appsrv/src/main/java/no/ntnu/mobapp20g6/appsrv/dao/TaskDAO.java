@@ -196,6 +196,7 @@ public class TaskDAO {
         } else {
             prepareTaskForEdit(task);
             task.getUsers().add(user);
+            task.addToParticipantCount(1);
             if(saveTask(task) != null) {
                 System.out.println("User was successfully added to task.");
                 userWasAdded = true;
@@ -242,6 +243,8 @@ public class TaskDAO {
      */
     public List<Task> getAssignedTasks(User user) {
         if(user != null) {
+            System.out.println("Assigned tasks is: " + user.getAssignedTasks() + ".");
+            em.merge(user);
             return user.getAssignedTasks();
         } else {
             System.out.println("User is null in getAssignedTasks!");
