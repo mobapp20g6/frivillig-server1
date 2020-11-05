@@ -51,9 +51,9 @@ public class User implements Serializable {
     @NotEmpty
     private String email;
 
-    @JsonbTransient
     @Size(min = 6)
     @NotEmpty
+    @JsonbTransient
     private String password;
 
     @Column(name = "created_date")

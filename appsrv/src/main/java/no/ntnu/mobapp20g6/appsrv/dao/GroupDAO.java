@@ -35,7 +35,7 @@ public class GroupDAO {
     public Group addGroup(String title, String description, Long orgId, User creator) {
         Group group = createGroup(title, description, orgId, creator);
         if(group != null) {
-            em.merge(group);
+            group = em.merge(group);
             em.flush();
             return group;
         } else {

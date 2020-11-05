@@ -52,7 +52,7 @@ public class TaskDAO {
                         Long maxUsers, Date scheduleDate, Group group) {
         Task task = createTask(creator, title, description, maxUsers, scheduleDate, group);
         if(task != null) {
-            em.merge(task);
+            task = em.merge(task);
             em.flush();
             return task;
         } else {
