@@ -95,15 +95,18 @@ public class User implements Serializable {
     // 1-N REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "creatorUser")
+    @JsonbTransient
     private List<Task> creatorOfTasks;
 
     // N-1 REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "ownerUser")
+    @JsonbTransient
     private List<Group> ownedGroups;
 
     // M-N REF
     @Getter
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    @JsonbTransient
     private List<Task> assignedTasks;
 }

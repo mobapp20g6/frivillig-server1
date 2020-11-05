@@ -229,6 +229,7 @@ public class TaskDAO {
      */
     public List<Task> getOwnedTasks(User user) {
         if(user != null) {
+            em.refresh(user);
             return user.getCreatorOfTasks();
         } else {
             System.out.println("User is null in getOwnedTasks!");
@@ -243,8 +244,7 @@ public class TaskDAO {
      */
     public List<Task> getAssignedTasks(User user) {
         if(user != null) {
-            System.out.println("Assigned tasks is: " + user.getAssignedTasks() + ".");
-            em.merge(user);
+            em.refresh(user);
             return user.getAssignedTasks();
         } else {
             System.out.println("User is null in getAssignedTasks!");
