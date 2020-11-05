@@ -22,7 +22,7 @@ public class Picture implements Serializable {
 
     @NotEmpty
     @JsonbTransient
-    private String filePath;
+    private String fileName;
 
     @JsonbTransient
     private Long fileSize;
@@ -30,9 +30,9 @@ public class Picture implements Serializable {
     @JsonbTransient
     private String mimeType;
 
-    public Picture(String id, @NotEmpty String filePath, Long fileSize, String mimeType) {
+    public Picture(String id, @NotEmpty String fileName, Long fileSize, String mimeType) {
         this.id = id;
-        this.filePath = filePath;
+        this.fileName = fileName;
         this.fileSize = fileSize;
         this.mimeType = mimeType;
     }
