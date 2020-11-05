@@ -34,6 +34,7 @@ public class ImageService {
     public Response getImage(@QueryParam("imageid") Long id) {
         if (id == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
+
         Picture image = dao.getImage(id);
         if (image == null)
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -47,6 +48,7 @@ public class ImageService {
 
         if (image == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
+
         Task updatedTask = dao.testStoreImage(image);
         return Response.ok(updatedTask).build();
     }
@@ -59,6 +61,7 @@ public class ImageService {
             @FormDataParam("image") FormDataMultiPart image) {
         if (groupID == null || image == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
+
         Group updatedGroup = dao.setGroupLogo(groupID, image);
         return Response.ok(updatedGroup).build();
     }
@@ -71,6 +74,7 @@ public class ImageService {
             @FormDataParam("image") FormDataMultiPart image) {
         if (taskID == null || image == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
+
         Task updatedTask = dao.setTaskImage(taskID, image);
         return Response.ok(updatedTask).build();
     }

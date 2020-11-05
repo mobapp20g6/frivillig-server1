@@ -29,6 +29,8 @@ import java.util.logging.Level;
 @ImageDaoProducer
 public class ImageDaoImpl implements ImageDao{
 
+    private static final String FORM_DATA_KEY = "image";
+
     @Resource(lookup = DatasourceProducer.JNDI_NAME)
     DataSource ds;
 
@@ -38,17 +40,11 @@ public class ImageDaoImpl implements ImageDao{
     @Inject
     @ConfigProperty(name = "image.storage.path", defaultValue = "images")
     String imagePath;
-
-    @Inject
-    @ConfigProperty(name = "logo.storage.path", defaultValue = "logo")
-    String logoPath;
-
+    
     private String getImagePath() {
         return imagePath;
     }
-
-    private String getLogoPath() { return logoPath; }
-
+    
     public Picture getImage(Long id) {
         if (id == null) return null;
 
@@ -60,32 +56,36 @@ public class ImageDaoImpl implements ImageDao{
     }
 
     public Task testStoreImage(FormDataMultiPart multiPart) {
-        String path = imagePath;
+        if (multiPart == null) {
+            return null;
+        }
+        Task task = em.find(Task.class, multiPart);
+        if (task == null) {
+            return null;
+        }
+        List<FormDataBodyPart> images = multiPart.getFields(FORM_DATA_KEY);
         try {
-            List<FormDataBodyPart> images = multiPart.getFields("image");
             if (images != null) {
                 for (FormDataBodyPart imagePart : images) {
                     InputStream is = imagePart.getEntityAs(InputStream.class);
                     ContentDisposition meta = imagePart.getContentDisposition();
 
                     String iid = UUID.randomUUID().toString();
-                    if (!(Files.exists(Paths.get(path)))) {
-                        Files.createDirectory(Paths.get(path));
+                    if (!(Files.exists(Paths.get(getImagePath())))) {
+                        Files.createDirectory(Paths.get(getImagePath()));
                     }
-                    Long size = Files.copy(is, Paths.get(path, iid));
+                    Long size = Files.copy(is, Paths.get(getImagePath(), iid));
 
                     Picture picture = new Picture(iid, meta.getFileName(), size, meta.getType());
-                    Task task = new Task();
                     task.setPicture(picture);
                     em.persist(picture);
                     em.flush();
-                    return task;
                 }
             }
         } catch (IOException ioe) {
-
+            log.log(Level.INFO, ioe.getMessage());
         }
-        return null;
+        return task;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ImageDaoImpl implements ImageDao{
         if (group == null) {
             return null;
         }
-        List<FormDataBodyPart> logos = data.getFields("image");
+        List<FormDataBodyPart> logos = data.getFields(FORM_DATA_KEY);
         try {
             if (logos != null) {
                 for (FormDataBodyPart logoPart : logos) {
@@ -105,10 +105,10 @@ public class ImageDaoImpl implements ImageDao{
                     ContentDisposition meta = logoPart.getContentDisposition();
 
                     String iid = UUID.randomUUID().toString();
-                    if (!(Files.exists(Paths.get(getLogoPath())))) {
-                        Files.createDirectory(Paths.get(getLogoPath()));
+                    if (!(Files.exists(Paths.get(getImagePath())))) {
+                        Files.createDirectory(Paths.get(getImagePath()));
                     }
-                    Long size = Files.copy(is, Paths.get(getLogoPath(), iid));
+                    Long size = Files.copy(is, Paths.get(getImagePath(), iid));
 
                     Picture picture = new Picture(iid, meta.getFileName(), size, meta.getType());
                     group.setPicture(picture);
@@ -131,7 +131,7 @@ public class ImageDaoImpl implements ImageDao{
         if (task == null) {
             return null;
         }
-        List<FormDataBodyPart> images = data.getFields("image");
+        List<FormDataBodyPart> images = data.getFields(FORM_DATA_KEY);
         try {
             if (images != null) {
                 for (FormDataBodyPart imagePart : images) {
