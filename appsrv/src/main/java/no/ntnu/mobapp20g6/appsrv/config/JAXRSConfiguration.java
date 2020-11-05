@@ -14,7 +14,7 @@ import javax.ws.rs.ApplicationPath;
 public class JAXRSConfiguration extends ResourceConfig {
     public JAXRSConfiguration() {
 
-        packages(true,"no.ntnu.mobapp20g6.appsrv.resources")
+        packages(true,"no.ntnu.mobapp20g6.appsrv.resources", "no.ntnu.mobapp20g6.appsrv.auth")
                 .register(MultiPartFeature.class);
 
     }
