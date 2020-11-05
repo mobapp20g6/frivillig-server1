@@ -44,16 +44,6 @@ public class ImageDaoImpl implements ImageDao{
     private String getImagePath() {
         return imagePath;
     }
-    
-    public Picture getImage(Long id) {
-        if (id == null) return null;
-
-        Picture found = em.find(Picture.class, id);
-        if (found == null) return null;
-
-        em.refresh(found);
-        return found;
-    }
 
     public Task testStoreImage(FormDataMultiPart multiPart) {
         if (multiPart == null) {
@@ -156,4 +146,14 @@ public class ImageDaoImpl implements ImageDao{
         return task;
     }
 
-}
+    @Override
+    public Picture getImage(String name) {
+        if (name == null) return null;
+
+        Picture picture = em.find(Picture.class,name);
+        if (picture == null) return null;
+
+        em.refresh(picture);
+        return picture;
+    }
+    }

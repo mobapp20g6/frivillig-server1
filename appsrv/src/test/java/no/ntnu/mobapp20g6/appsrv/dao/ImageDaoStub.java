@@ -13,14 +13,9 @@ public class ImageDaoStub implements ImageDao {
     public static final Long EXISTING_TASK_ID = 3L;
     public static final Long EXISTING_GROUP_ID = 4L;
     public static final FormDataMultiPart INCOMING_PHOTO = new FormDataMultiPart();
-
-    @Override
-    public Picture getImage(Long id) {
-        if (EXISTING_IMAGE_ID.equals(id)) {
-            return new Picture();
-        }
-        return null;
-    }
+    public static final String EXISTING_IMAGE_NAME = "image";
+    public static final int INCOMING_PHOTO_WIDTH_NOT_GIVEN = 0;
+    public static final String NOT_EXISTING_IMAGE_NAME = "noImage";
 
     @Override
     public Task testStoreImage(FormDataMultiPart image) {
@@ -39,5 +34,12 @@ public class ImageDaoStub implements ImageDao {
         Task fakeTask = new Task();
         fakeTask.setId(EXISTING_TASK_ID);
         return fakeTask;
+    }
+
+    @Override
+    public Picture getImage(String name) {
+        if (EXISTING_IMAGE_NAME.equals(name))
+            return new Picture();
+        return null;
     }
 }

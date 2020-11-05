@@ -7,11 +7,11 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 public interface ImageDao {
 
-    Picture getImage(Long id);
-
     Task testStoreImage(FormDataMultiPart image);
 
     Group setGroupLogo(Long groupID, FormDataMultiPart data);
 
     Task setTaskImage(Long taskID, FormDataMultiPart data);
+
+    Picture getImage(String name);
 }

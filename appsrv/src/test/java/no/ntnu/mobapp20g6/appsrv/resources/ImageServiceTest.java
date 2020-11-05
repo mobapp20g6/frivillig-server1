@@ -1,5 +1,6 @@
 package no.ntnu.mobapp20g6.appsrv.resources;
 
+import no.ntnu.mobapp20g6.appsrv.dao.ImageDao;
 import no.ntnu.mobapp20g6.appsrv.dao.ImageDaoStub;
 import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Picture;
@@ -11,46 +12,54 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.awt.*;
 
 @RunWith(Enclosed.class)
 public class ImageServiceTest {
 
+
     @Nested
     class GivenGetImage {
+
         @Test
-        void whenExistingImageIDGiven_thenResponseIsOKAndContainsImage() {
+        void whenCorrectRequest_thenResponseIsOK() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.getImage(ImageDaoStub.EXISTING_IMAGE_ID);
+            Response response = imageService.getImage(
+                    ImageDaoStub.EXISTING_IMAGE_NAME,
+                    ImageDaoStub.INCOMING_PHOTO_WIDTH_NOT_GIVEN
+            );
             assertEquals(
                     "HTTP Response should be 200",
                     Response.Status.OK.getStatusCode(),
                     response.getStatus()
             );
-            assertEquals(
-                    "HTTP Response should contain Image",
-                    Picture.class,
-                    response.getEntity().getClass()
-            );
         }
 
         @Test
-        void whenWrongImageIDGiven_thenResponseIsNotFound() {
+        void whenNameNotGiven_thenResponseIsBadRequest() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.getImage(ImageDaoStub.NOT_EXISTING_ID);
+            Response response = imageService.getImage(
+                    null,
+                    ImageDaoStub.INCOMING_PHOTO_WIDTH_NOT_GIVEN
+            );
             assertEquals(
-                    "HTTP Response should be 404",
-                    Response.Status.NOT_FOUND.getStatusCode(),
+                    "HTTP Response should be 400",
+                    Response.Status.BAD_REQUEST.getStatusCode(),
                     response.getStatus()
             );
         }
 
         @Test
-        void whenIDisNull_thenResponseIsBadRequest() {
+        void whenPictureDoesNotExist_thenResponseIsNotFound() {
             ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.getImage(ImageDaoStub.BAD_ID);
+            Response response = imageService.getImage(
+                    ImageDaoStub.NOT_EXISTING_IMAGE_NAME,
+                    ImageDaoStub.INCOMING_PHOTO_WIDTH_NOT_GIVEN
+            );
             assertEquals(
-                    "HTTP Response should be 400",
-                    Response.Status.BAD_REQUEST.getStatusCode(),
+                    "HTTP Response should be 404",
+                    Response.Status.NOT_FOUND.getStatusCode(),
                     response.getStatus()
             );
         }
