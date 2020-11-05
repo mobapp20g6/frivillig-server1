@@ -8,24 +8,7 @@ import lombok.NoArgsConstructor;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 
 import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -39,16 +22,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false, exclude={"creatorOfTasks","ownedGroups","assignedTasks"})
-@NamedQueries({
-        @NamedQuery(name = User.FIND_ALL_USERS,
-                query = "SELECT p FROM users p ORDER BY p.firstName"),
-        @NamedQuery(name = User.FIND_USER_BY_EMAIL,
-                query = "SELECT p FROM users p WHERE p.email LIKE :email")
-})
+@NamedQuery(name = User.FIND_ALL_USERS,
+        query = "SELECT p FROM users p ORDER BY p.firstName")
+@NamedQuery(name = User.FIND_USER_BY_EMAIL,
+        query = "SELECT p FROM users p WHERE p.email LIKE :email")
 public class User implements Serializable {
-
-    public final static String FIND_ALL_USERS = "User.findAllUsers";
-    public final static String FIND_USER_BY_EMAIL = "User.findUserByEmail";
+    public static final String FIND_ALL_USERS = "User.findAllUsers";
+    public static final String FIND_USER_BY_EMAIL = "User.findUserByEmail";
 
     public enum State {
         ACTIVE, INACTIVE
@@ -71,9 +51,9 @@ public class User implements Serializable {
     @NotEmpty
     private String email;
 
-    @JsonbTransient
     @Size(min = 6)
     @NotEmpty
+    @JsonbTransient
     private String password;
 
     @Column(name = "created_date")
@@ -97,7 +77,7 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(
                     name = "role_name",
                     referencedColumnName = "role_name"))
-    List<RoleGroup> roleGroups;
+    private List<RoleGroup> roleGroups;
 
     public List<RoleGroup> getRoleGroups() {
         if (this.roleGroups == null) {
@@ -115,25 +95,18 @@ public class User implements Serializable {
     // 1-N REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "creatorUser")
+    @JsonbTransient
     private List<Task> creatorOfTasks;
 
     // N-1 REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "ownerUser")
+    @JsonbTransient
     private List<Group> ownedGroups;
 
     // M-N REF
     @Getter
-    @ManyToMany
-    @JoinTable(name = "task_has_user",
-            joinColumns = @JoinColumn(
-                    name = "user_id",
-                    referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(
-            name = "task_id",
-            referencedColumnName = "task_id"))
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     @JsonbTransient
-    List<Task> assignedTasks;
-
-
+    private List<Task> assignedTasks;
 }

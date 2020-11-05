@@ -1,23 +1,12 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -26,9 +15,11 @@ import java.util.List;
 
 @Entity(name = "groups")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false, exclude={"memberUsers","associatedTasks"})
+@NamedQuery(name = Group.FIND_ALL_GROUPS, query = "SELECT g FROM groups g" )
 public class Group implements Serializable {
+    public static final String FIND_ALL_GROUPS = "findAllGroups";
 
     @Id
     @Column(name="group_id")
@@ -59,6 +50,7 @@ public class Group implements Serializable {
     // 1-1 Owner
     @ManyToOne
     @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id")
+    @JsonbTransient
     private User ownerUser;
 
     // 1-1 Owner
@@ -74,10 +66,26 @@ public class Group implements Serializable {
     // 1-N REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "memberOfGroup")
+    @JsonbTransient
     private List<User> memberUsers;
 
     // 1-N REF
     @Getter
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "associatedGroup")
+    @JsonbTransient
     private List<Task> associatedTasks;
+
+    /**
+     * Constructor for group.
+     * @param tile name of group.
+     * @param description of group
+     * @param orgId
+     * @param creator user which created the group.
+     */
+    public Group(String tile, String description, Long orgId, User creator) {
+        this.name = tile;
+        this.description = description;
+        this.originationId = orgId;
+        this.ownerUser = creator;
+    }
 }
