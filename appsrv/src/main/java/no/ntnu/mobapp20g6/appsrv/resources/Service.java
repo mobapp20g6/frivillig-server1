@@ -2,6 +2,7 @@ package no.ntnu.mobapp20g6.appsrv.resources;
 
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 import no.ntnu.mobapp20g6.appsrv.dao.GroupDAO;
+import no.ntnu.mobapp20g6.appsrv.dao.LocationDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.Group;
@@ -32,6 +33,9 @@ public class Service {
 
     @Inject
     GroupDAO groupDAO;
+
+    @Inject
+    LocationDAO locationDAO;
 
     @Inject
     JsonWebToken principal;
@@ -327,5 +331,30 @@ public class Service {
             System.out.println("userId or groupId was null.");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+    }
+
+
+    @POST
+    @Path("/addlocation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = RoleGroup.USER)
+    public Response addLocation(
+            @FormParam("groupid") String groupId,
+            @FormParam("taskid") String taskId,
+            @FormParam("lat") String latitude,
+            @FormParam("long") String longitude,
+            @FormParam("street") String streetAddr,
+            @FormParam("city") String city,
+            @FormParam("postcode") Long postal,
+            @FormParam("country") String country) {
+
+        // 200
+        // 403 Forbidden != not owner
+        // 400 Missing both uid/gid
+
+        Response.Status code = Response.Status.OK;
+
+        return Response.status(code).build();
+
     }
 }
