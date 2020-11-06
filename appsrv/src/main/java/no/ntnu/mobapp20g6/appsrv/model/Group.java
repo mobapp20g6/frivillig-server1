@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -87,5 +88,9 @@ public class Group implements Serializable {
         this.description = description;
         this.originationId = orgId;
         this.ownerUser = creator;
+        if(this.memberUsers == null) {
+            this.memberUsers = new ArrayList<>();
+        }
+        this.memberUsers.add(creator);
     }
 }
