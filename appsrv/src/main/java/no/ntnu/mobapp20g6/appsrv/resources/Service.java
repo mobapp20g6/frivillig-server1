@@ -92,6 +92,10 @@ public class Service {
         }
         if(groupId != null) {
             taskGroup = groupDAO.getGroupById(groupId);
+            //Returns FORBIDDEN if user is not a member of the group.
+            if(taskGroup != null && !groupDAO.isUserInGroup(userDAO.findUserById(principal.getName()), taskGroup)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
         }
         if(groupId == null || taskGroup != null) {
             Task createdTask = taskDAO.addTask(userDAO.findUserById(principal.getName()),
