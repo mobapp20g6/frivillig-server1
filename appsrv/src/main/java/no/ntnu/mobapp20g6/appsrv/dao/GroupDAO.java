@@ -1,6 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.dao;
 
 import no.ntnu.mobapp20g6.appsrv.model.Group;
+import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
 import javax.ejb.Stateless;
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.Collections;
 import java.util.List;
 
 @Stateless
@@ -150,9 +152,8 @@ public class GroupDAO {
      * @param group to see if user is in.
      * @return true if user is in group.
      */
-    private boolean isUserInGroup(User user, Group group) {
-        List<User> groupMembers = group.getMemberUsers();
-        for (User userInGroup:groupMembers) {
+    public boolean isUserInGroup(User user, Group group) {
+        for (User userInGroup:group.getMemberUsers()) {
             if(userInGroup == user) {
                 //User is in group.
                 return true;
@@ -160,5 +161,19 @@ public class GroupDAO {
         }
         //User is not in group.
         return false;
+    }
+
+    /**
+     * Return all tasks which is associated with the group.
+     * @param group to find all associated tasks in.
+     * @return List of tasks or empty list if group is null.
+     */
+    public List<Task> getAllGroupTasks(Group group) {
+        if(group != null) {
+            em.refresh(group);
+            return group.getAssociatedTasks();
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

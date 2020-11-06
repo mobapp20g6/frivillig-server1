@@ -332,4 +332,29 @@ public class Service {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
+
+    @GET
+    @Path("/getallgrouptasks")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response getAllGroupTasks(
+            @QueryParam("groupid") Long groupId) {
+        if(groupId != null) {
+            Group group = groupDAO.getGroupById(groupId);
+            if (group != null) {
+                if (groupDAO.isUserInGroup(userDAO.findUserById(principal.getName()), group)) {
+                    return Response.ok(groupDAO.getAllGroupTasks(group)).build();
+                } else {
+                    //User is not a member of the group.
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+            } else {
+                //No group with groupId found.
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            //groupId was null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
 }
