@@ -37,29 +37,20 @@ public class ImageService {
     private String getImagePath() {
         return imagePath;
     }
-
-    @POST
-    @Path("testsetimage")
-    public Response testStoreImage(
-            FormDataMultiPart image) {
-
-        if (image == null)
-            return Response.status(Response.Status.BAD_REQUEST).build();
-
-        Task updatedTask = dao.testStoreImage(image);
-        return Response.ok(updatedTask).build();
-    }
-
+    
     @POST
     @Path("setgrouplogo")
     @RolesAllowed(value = {RoleGroup.USER})
     public Response setGroupLogo(
             @FormDataParam("groupid") Long groupID,
-            @FormDataParam("image") FormDataMultiPart image) {
+            FormDataMultiPart image) {
         if (groupID == null || image == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
 
         Group updatedGroup = dao.setGroupLogo(groupID, image);
+        if (updatedGroup == null) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
         return Response.ok(updatedGroup).build();
     }
 
@@ -67,18 +58,21 @@ public class ImageService {
     @Path("settaskimage")
     @RolesAllowed(value = {RoleGroup.USER})
     public Response setTaskImage(
-            @FormDataParam("taskid")Long taskID,
-            @FormDataParam("image") FormDataMultiPart image) {
+            @FormDataParam("taskid") Long taskID,
+            FormDataMultiPart image) {
         if (taskID == null || image == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
 
         Task updatedTask = dao.setTaskImage(taskID, image);
+        if (updatedTask == null)
+            return Response.status(Response.Status.NO_CONTENT).build();
         return Response.ok(updatedTask).build();
     }
 
     @GET
     @Path("getimage")
     @Produces("image/jpeg")
+    @RolesAllowed(value = {RoleGroup.USER})
     public Response getImage(@QueryParam("name") String id,
                              @QueryParam("width") int width) {
         if (id == null) {
