@@ -1,9 +1,8 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,8 +20,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,13 +31,12 @@ import java.util.List;
 
 @Entity(name = "tasks")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
-@NamedQuery(name = Task.FIND_TASK_BY_ID, query = "SELECT t FROM tasks t WHERE t.id = :id") //<-- Need testing
+//@NamedQuery(name = Task.FIND_TASKS_ASSIGNED_TO, query = "SELECT t FROM tasks t WHERE t. LIKE :userId")
 public class Task implements Serializable {
     public static final String FIND_ALL_TASKS = "getAllTasks";
-    public static final String FIND_TASK_BY_ID = "findTaskById";
+    //public static final String FIND_TASKS_ASSIGNED_TO = "findTasksAssignedTo";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,26 +57,31 @@ public class Task implements Serializable {
 
     @Column(name = "created_date")
     @Temporal(TemporalType.DATE)
+    @Getter
     private Date created;
+
+    @Column(name = "scheduel_date")
+    @Temporal(TemporalType.DATE)
+    private Date scheduleDate;
 
     @Size(max = 280)
     private String description;
 
     @Column(name = "participant_limit")
-    @Positive
-    @NotEmpty
-    private int participantLimit;
+    @Min(value = 0L)
+    @NotNull
+    private Long participantLimit;
 
     @Column(name = "participant_count")
-    @Positive
-    private int participantCount;
+    @Min(value = 0L)
+    private Long participantCount;
 
     @PrePersist
     protected void onCreate() {
         created = new Date();
 
         //Owner is not participant
-        participantCount = 0;
+        participantCount = 0L;
     }
 
     // N-1 Owner
@@ -110,7 +114,7 @@ public class Task implements Serializable {
             inverseJoinColumns = @JoinColumn(
                     name = "user_id",
                     referencedColumnName = "user_id"))
-    List<User> users;
+    private List<User> users;
 
 
     public List<User> getUsers() {
@@ -118,7 +122,34 @@ public class Task implements Serializable {
             this.users = new ArrayList<>();
         }
         return this.users;
+    }
 
+    public void addToParticipantCount(int participantsToAdd) {
+        participantCount += participantsToAdd;
+    }
+
+    /**
+     * Task constructor.
+     * @param title of task.
+     * @param description to describe the task.
+     * @param scheduled date of when task is scheduled to be done.
+     * @param participantLimit maximum of participants allowed to join task. Will be set
+     *                         to 1 if null or 0.
+     * @param creator of the task.
+     * @param associatedGroup group the task is associated with. If null group is public.
+     */
+    public Task(String title, String description, Date scheduled, Long participantLimit,
+                User creator, Group associatedGroup) {
+        this.title = title;
+        this.description = description;
+        this.scheduleDate = scheduled;
+        if(participantLimit == null || participantLimit == 0) {
+            this.participantLimit = 1L;
+        } else {
+            this.participantLimit = participantLimit;
+        }
+        this.creatorUser = creator;
+        this.associatedGroup = associatedGroup;
     }
 
 }
