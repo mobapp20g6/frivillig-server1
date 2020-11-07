@@ -389,7 +389,6 @@ public class Service {
             return resp;
         }
 
-        boolean success = false;
         boolean gpsValid = latitude != null && longitude != null ? true : false;
         boolean addressValid = streetAddr !=null && city != null && postal != null
                 && country != null ? true : false;
@@ -424,7 +423,7 @@ public class Service {
         if (valid != null) {
             if (task != null) {
                 if (task.getLocation() != null) {
-                        locationDAO.deleteLocation(taskDAO.detatchLocationFromTask(task,caller));
+                        locationDAO.deleteLocation(taskDAO.detachLocationFromTask(task,caller));
                 }
                 task = taskDAO.attachLocationToTask(task,valid,caller);
                 if (task != null) {

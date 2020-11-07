@@ -141,31 +141,31 @@ public class UserDAO {
 
 	}
 
-	public User addRoleGroup(User user, String RoleGroup, boolean add) {
-		RoleGroup RoleGroupToChange = findRoleGroupByName(RoleGroup);
-		if (RoleGroupToChange == null || user == null) {
+	public User addRoleGroup(User user, String roleGroup, boolean add) {
+		RoleGroup roleGroupToChange = findRoleGroupByName(roleGroup);
+		if (roleGroupToChange == null || user == null) {
 			System.out.println("=== USER EJB: UserRoleGroup MGMT ===");
 			System.out.println("- Status...........: " + "Parameters invalid");
 			return null;
 		} else {
 			List<RoleGroup> currentRoleGroups = user.getRoleGroups();
-			List<RoleGroup> predictedRoleGroups = new ArrayList<RoleGroup>(currentRoleGroups);
+			List<RoleGroup> predictedRoleGroups = new ArrayList<>(currentRoleGroups);
 			String action = "add";
 			if (add) {
-				if (!(predictedRoleGroups.contains(RoleGroupToChange))) {
-					predictedRoleGroups.add(RoleGroupToChange);
+				if (!(predictedRoleGroups.contains(roleGroupToChange))) {
+					predictedRoleGroups.add(roleGroupToChange);
 				}
 			} else {
 				action = "remove";
-				if (predictedRoleGroups.contains(RoleGroupToChange)) {
-					predictedRoleGroups.remove(RoleGroupToChange);
+				if (predictedRoleGroups.contains(roleGroupToChange)) {
+					predictedRoleGroups.remove(roleGroupToChange);
 				}
 			}
 
 			System.out.println("=== USER EJB: UserRoleGroup MGMT ===");
 			System.out.println("- User.............: " + user.getId());
 			System.out.println("- Current RoleGroups...: " + returnRoleGroupNames(currentRoleGroups));
-			System.out.println("- RoleGroups to " + action + ": " + RoleGroupToChange.getName());
+			System.out.println("- RoleGroups to " + action + ": " + roleGroupToChange.getName());
 			System.out.println("- Predicted update...: " + returnRoleGroupNames(predictedRoleGroups));
 
 			if (currentRoleGroups.equals(predictedRoleGroups)) {
@@ -173,16 +173,15 @@ public class UserDAO {
 				System.out.println("- Status...........: " + "NO CHANGE, SKIPPING");
 				return user;
 			} else {
-				List<RoleGroup> changedRoleGroups = currentRoleGroups;
 				if (add) {
-					changedRoleGroups.add(RoleGroupToChange);
+					currentRoleGroups.add(roleGroupToChange);
 					System.out.println("- Action.............: " + "ADD");
 				} else {
-					changedRoleGroups.remove(RoleGroupToChange);
+					currentRoleGroups.remove(roleGroupToChange);
 					System.out.println("- Action.............: " + "REVOKE");
 
 				}
-				System.out.println("- Completed update...: " + returnRoleGroupNames(changedRoleGroups));
+				System.out.println("- Completed update...: " + returnRoleGroupNames(currentRoleGroups));
 				em.flush();
 				return user;
 			}
@@ -202,14 +201,14 @@ public class UserDAO {
 	}
 
 	private RoleGroup findRoleGroupByName(String name) {
-		if (RoleGroupExists(name)) {
+		if (roleGroupExists(name)) {
 			return em.find(RoleGroup.class, name);
 		} else {
 			return null;
 		}
 	}
 
-	private boolean RoleGroupExists(String input) {
+	private boolean roleGroupExists(String input) {
 		boolean result = false;
 		if (input!= null) {
 			switch (input) {
