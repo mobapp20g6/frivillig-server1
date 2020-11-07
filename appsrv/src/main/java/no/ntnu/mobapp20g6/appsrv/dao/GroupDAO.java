@@ -2,6 +2,7 @@ package no.ntnu.mobapp20g6.appsrv.dao;
 
 import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Location;
+import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
 import javax.ejb.Stateless;
@@ -173,5 +174,18 @@ public class GroupDAO {
             }
         }
         return null;
+    }
+
+    public Location detatchLocationFromGroup(Group g, User u) {
+        Location location = null;
+        if (u != null && g != null) {
+            if (isUserOwnerOfGroup(u, g)) {
+                prepareGroupForEdit(g);
+                location = g.getLocation();
+                g.setLocation(null);
+                saveGroup(g);
+            }
+        }
+        return location;
     }
 }

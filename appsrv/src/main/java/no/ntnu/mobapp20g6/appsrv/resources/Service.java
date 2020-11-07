@@ -357,7 +357,7 @@ public class Service {
         Response resp = Response.status(Response.Status.BAD_REQUEST).build();
         User caller = userDAO.findUserById(principal.getName());
 
-        if ((groupId == null && taskId == null) || caller == null) {
+        if ((groupId == null && taskId == null) || (groupId != null && taskId != null) || caller == null) {
             return resp;
         }
 
@@ -367,28 +367,25 @@ public class Service {
                 && country != null ? true : false;
 
         Location valid;
-        Task t = null;
-        Group g = null;
+        Task task = null;
+        Group group = null;
 
         // check that loc is either gps or addr
         if ((gpsValid && addressValid) || (!gpsValid && !addressValid)) {
             valid = null;
         } else {
-            if (groupId != null && taskId != null) {
-                t = taskDAO.getTaskById(taskId);
-                g = groupDAO.getGroupById(groupId);
-            } else if (groupId != null && taskId == null) {
-                t = taskDAO.getTaskById(taskId);
-            } else if (groupId == null && taskId != null) {
-                g = groupDAO.getGroupById(groupId);
-            }
+                if (taskId != null) {
+                    task = taskDAO.getTaskById(taskId);
+                } else {
+                    group = groupDAO.getGroupById(groupId);
+                }
 
             //Check if any task or group was found
-            if (t != null || g != null) {
+            if (task != null || group != null) {
                 if (gpsValid) {
-                    valid = new Location(latitude,longitude);
+                    valid = locationDAO.createGpsLocation(latitude,longitude);
                 } else {
-                    valid = new Location(streetAddr,city,postal,country);
+                    valid = locationDAO.createAddressLocation(streetAddr,city,postal,country);
                 }
             } else {
                 valid = null;
@@ -396,18 +393,26 @@ public class Service {
         }
 
         if (valid != null) {
-            if (t != null && g != null) {
-                t = taskDAO.attachLocationToTask(t,valid,caller);
-                g = groupDAO.attachLocationToGroup(g,valid,caller);
-                resp = Response.ok().build();
-            } else if (t != null && g == null) {
-                t = taskDAO.attachLocationToTask(t,valid,caller);
-                resp = Response.ok(t).build();
-            } else if (t == null && g != null) {
-                g = groupDAO.attachLocationToGroup(g,valid,caller);
-                resp = Response.ok(g).build();
+            if (task != null) {
+                if (task.getLocation() != null) {
+                        locationDAO.deleteLocation(taskDAO.detatchLocationFromTask(task,caller));
+                }
+                task = taskDAO.attachLocationToTask(task,valid,caller);
+                if (task != null) {
+                    resp = Response.ok(task).build();
+                } else {
+                    resp = Response.status(Response.Status.FORBIDDEN).build();
+                }
             } else {
-                // ERROR
+                if (group.getLocation() != null) {
+                    locationDAO.deleteLocation(groupDAO.detatchLocationFromGroup(group,caller));
+                }
+                group = groupDAO.attachLocationToGroup(group,valid,caller);
+                if (group != null) {
+                    resp = Response.ok(group).build();
+                } else {
+                    resp = Response.status(Response.Status.FORBIDDEN).build();
+                }
             }
         }
 

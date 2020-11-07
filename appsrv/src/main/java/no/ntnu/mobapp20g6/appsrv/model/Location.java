@@ -2,6 +2,7 @@ package no.ntnu.mobapp20g6.appsrv.model;
 
 import lombok.*;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Locale;
@@ -56,12 +57,14 @@ public class Location implements Serializable {
     // 1-1 REF
     @Getter
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "location")
+    @JsonbTransient
     private Group group;
 
 
     // 1-1 REF
     @Getter
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "location")
+    @JsonbTransient
     private Task task;
 
 }

@@ -54,7 +54,7 @@ public class Group implements Serializable {
     private User ownerUser;
 
     // 1-1 Owner
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "location_id", referencedColumnName = "location_id")
     private Location location;
 

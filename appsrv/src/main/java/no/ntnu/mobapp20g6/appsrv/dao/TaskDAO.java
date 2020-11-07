@@ -254,7 +254,7 @@ public class TaskDAO {
     }
 
     public Task attachLocationToTask(Task t, Location l, User u) {
-        if (t != null & l != null) {
+        if (t != null && l != null) {
             if (isUserOwnerOfTask(u, t)) {
                 prepareTaskForEdit(t);
                 t.setLocation(l);
@@ -263,5 +263,18 @@ public class TaskDAO {
             }
         }
         return null;
+    }
+
+    public Location detatchLocationFromTask(Task t, User u) {
+        Location location = null;
+        if (u != null && t != null) {
+            if (isUserOwnerOfTask(u, t)) {
+                prepareTaskForEdit(t);
+                location = t.getLocation();
+                t.setLocation(null);
+                saveTask(t);
+            }
+        }
+        return location;
     }
 }
