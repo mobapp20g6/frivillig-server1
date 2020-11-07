@@ -92,6 +92,10 @@ public class Service {
         }
         if(groupId != null) {
             taskGroup = groupDAO.getGroupById(groupId);
+            //Returns FORBIDDEN if user is not a member of the group.
+            if(taskGroup != null && !groupDAO.isUserInGroup(userDAO.findUserById(principal.getName()), taskGroup)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
         }
         if(groupId == null || taskGroup != null) {
             Task createdTask = taskDAO.addTask(userDAO.findUserById(principal.getName()),
@@ -325,6 +329,31 @@ public class Service {
             }
         } else {
             System.out.println("userId or groupId was null.");
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    @GET
+    @Path("/getallgrouptasks")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response getAllGroupTasks(
+            @QueryParam("groupid") Long groupId) {
+        if(groupId != null) {
+            Group group = groupDAO.getGroupById(groupId);
+            if (group != null) {
+                if (groupDAO.isUserInGroup(userDAO.findUserById(principal.getName()), group)) {
+                    return Response.ok(groupDAO.getAllGroupTasks(group)).build();
+                } else {
+                    //User is not a member of the group.
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+            } else {
+                //No group with groupId found.
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            //groupId was null.
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
