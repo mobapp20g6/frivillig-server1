@@ -2,9 +2,11 @@ package no.ntnu.mobapp20g6.appsrv.resources;
 
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
 import no.ntnu.mobapp20g6.appsrv.dao.GroupDAO;
+import no.ntnu.mobapp20g6.appsrv.dao.LocationDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.Group;
+import no.ntnu.mobapp20g6.appsrv.model.Location;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -33,6 +35,9 @@ public class Service {
 
     @Inject
     GroupDAO groupDAO;
+
+    @Inject
+    LocationDAO locationDAO;
 
     @Inject
     JsonWebToken principal;
@@ -339,7 +344,7 @@ public class Service {
     @RolesAllowed(value = {RoleGroup.USER})
     public Response getAllGroupTasks(
             @QueryParam("groupid") Long groupId) {
-        if(groupId != null) {
+        if (groupId != null) {
             Group group = groupDAO.getGroupById(groupId);
             if (group != null) {
                 if (groupDAO.isUserInGroup(userDAO.findUserById(principal.getName()), group)) {
@@ -356,5 +361,89 @@ public class Service {
             //groupId was null.
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+    }
+
+    @POST
+    @Path("/addlocation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = RoleGroup.USER)
+    public Response addLocation(
+            @FormParam("groupid") Long groupId,
+            @FormParam("taskid") Long taskId,
+            @FormParam("lat") String latitude,
+            @FormParam("long") String longitude,
+            @FormParam("street") String streetAddr,
+            @FormParam("city") String city,
+            @FormParam("postcode") Long postal,
+            @FormParam("country") String country) {
+
+        // 200
+        // 403 Forbidden != not owner
+        // 400 Missing both uid/gid
+
+
+        Response resp = Response.status(Response.Status.BAD_REQUEST).build();
+        User caller = userDAO.findUserById(principal.getName());
+
+        if ((groupId == null && taskId == null) || (groupId != null && taskId != null) || caller == null) {
+            return resp;
+        }
+
+        boolean success = false;
+        boolean gpsValid = latitude != null && longitude != null ? true : false;
+        boolean addressValid = streetAddr !=null && city != null && postal != null
+                && country != null ? true : false;
+
+        Location valid;
+        Task task = null;
+        Group group = null;
+
+        // check that loc is either gps or addr
+        if ((gpsValid && addressValid) || (!gpsValid && !addressValid)) {
+            valid = null;
+        } else {
+                if (taskId != null) {
+                    task = taskDAO.getTaskById(taskId);
+                } else {
+                    group = groupDAO.getGroupById(groupId);
+                }
+
+            //Check if any task or group was found
+            if (task != null || group != null) {
+                if (gpsValid) {
+                    valid = locationDAO.createGpsLocation(latitude,longitude);
+                } else {
+                    valid = locationDAO.createAddressLocation(streetAddr,city,postal,country);
+                }
+            } else {
+                valid = null;
+            }
+        }
+
+        if (valid != null) {
+            if (task != null) {
+                if (task.getLocation() != null) {
+                        locationDAO.deleteLocation(taskDAO.detatchLocationFromTask(task,caller));
+                }
+                task = taskDAO.attachLocationToTask(task,valid,caller);
+                if (task != null) {
+                    resp = Response.ok(task).build();
+                } else {
+                    resp = Response.status(Response.Status.FORBIDDEN).build();
+                }
+            } else {
+                if (group.getLocation() != null) {
+                    locationDAO.deleteLocation(groupDAO.detatchLocationFromGroup(group,caller));
+                }
+                group = groupDAO.attachLocationToGroup(group,valid,caller);
+                if (group != null) {
+                    resp = Response.ok(group).build();
+                } else {
+                    resp = Response.status(Response.Status.FORBIDDEN).build();
+                }
+            }
+        }
+
+        return resp;
     }
 }

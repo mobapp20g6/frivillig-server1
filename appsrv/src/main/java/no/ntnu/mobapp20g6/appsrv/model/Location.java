@@ -1,26 +1,40 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Locale;
+import java.util.UUID;
 
 @Entity(name = "locations")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Location implements Serializable {
 
+    @PrePersist
+    protected void onCreate() {
+        this.id = UUID.randomUUID().toString();
+    }
+
+    public Location(String lat, String lon) {
+       this.gpsLat = lat;
+       this.gpsLong = lon;
+    }
+
+    public Location(String street, String city, Long postCode, String country) {
+        this.streetAddress = street;
+        this.city = city;
+        this.postalCode = postCode;
+        this.country = country;
+    }
+
+
     @Id
+    @Generated
     @Column(name="location_id")
-    private Long Id;
+    private String id;
 
     @Column(name = "gps_lat")
     private String gpsLat;
@@ -43,11 +57,14 @@ public class Location implements Serializable {
     // 1-1 REF
     @Getter
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "location")
+    @JsonbTransient
     private Group group;
 
 
     // 1-1 REF
     @Getter
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "location")
+    @JsonbTransient
     private Task task;
+
 }
