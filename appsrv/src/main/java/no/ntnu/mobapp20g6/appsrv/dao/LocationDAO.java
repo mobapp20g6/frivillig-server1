@@ -3,6 +3,8 @@ package no.ntnu.mobapp20g6.appsrv.dao;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.Location;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 
@@ -10,6 +12,12 @@ public class LocationDAO {
 
     @PersistenceContext
     EntityManager em;
+
+    @Inject
+    TaskDAO tdao;
+
+    @Inject
+    GroupDAO gdao;
 
     public Location getLocation(String uid) {
         Location found = null;
@@ -36,5 +44,14 @@ public class LocationDAO {
         System.out.println("DAO-LOC: Added Address " + o.getId());
         return o;
     }
+
+    public boolean isLocationGps(Location l) {
+        if (l.getGpsLat() == null && l.getGpsLong() == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 }

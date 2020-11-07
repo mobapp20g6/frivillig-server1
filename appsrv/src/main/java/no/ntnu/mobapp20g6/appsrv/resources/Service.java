@@ -6,6 +6,7 @@ import no.ntnu.mobapp20g6.appsrv.dao.LocationDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.TaskDAO;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.Group;
+import no.ntnu.mobapp20g6.appsrv.model.Location;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -339,8 +340,8 @@ public class Service {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(value = RoleGroup.USER)
     public Response addLocation(
-            @FormParam("groupid") String groupId,
-            @FormParam("taskid") String taskId,
+            @FormParam("groupid") Long groupId,
+            @FormParam("taskid") Long taskId,
             @FormParam("lat") String latitude,
             @FormParam("long") String longitude,
             @FormParam("street") String streetAddr,
@@ -352,9 +353,64 @@ public class Service {
         // 403 Forbidden != not owner
         // 400 Missing both uid/gid
 
-        Response.Status code = Response.Status.OK;
 
-        return Response.status(code).build();
+        Response resp = Response.status(Response.Status.BAD_REQUEST).build();
+        User caller = userDAO.findUserById(principal.getName());
 
+        if ((groupId == null && taskId == null) || caller == null) {
+            return resp;
+        }
+
+        boolean success = false;
+        boolean gpsValid = latitude != null && longitude != null ? true : false;
+        boolean addressValid = streetAddr !=null && city != null && postal != null
+                && country != null ? true : false;
+
+        Location valid;
+        Task t = null;
+        Group g = null;
+
+        // check that loc is either gps or addr
+        if ((gpsValid && addressValid) || (!gpsValid && !addressValid)) {
+            valid = null;
+        } else {
+            if (groupId != null && taskId != null) {
+                t = taskDAO.getTaskById(taskId);
+                g = groupDAO.getGroupById(groupId);
+            } else if (groupId != null && taskId == null) {
+                t = taskDAO.getTaskById(taskId);
+            } else if (groupId == null && taskId != null) {
+                g = groupDAO.getGroupById(groupId);
+            }
+
+            //Check if any task or group was found
+            if (t != null || g != null) {
+                if (gpsValid) {
+                    valid = new Location(latitude,longitude);
+                } else {
+                    valid = new Location(streetAddr,city,postal,country);
+                }
+            } else {
+                valid = null;
+            }
+        }
+
+        if (valid != null) {
+            if (t != null && g != null) {
+                t = taskDAO.attachLocationToTask(t,valid,caller);
+                g = groupDAO.attachLocationToGroup(g,valid,caller);
+                resp = Response.ok().build();
+            } else if (t != null && g == null) {
+                t = taskDAO.attachLocationToTask(t,valid,caller);
+                resp = Response.ok(t).build();
+            } else if (t == null && g != null) {
+                g = groupDAO.attachLocationToGroup(g,valid,caller);
+                resp = Response.ok(g).build();
+            } else {
+                // ERROR
+            }
+        }
+
+        return resp;
     }
 }

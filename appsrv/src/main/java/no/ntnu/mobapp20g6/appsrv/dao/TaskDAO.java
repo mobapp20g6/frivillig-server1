@@ -1,6 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.dao;
 
 import no.ntnu.mobapp20g6.appsrv.model.Group;
+import no.ntnu.mobapp20g6.appsrv.model.Location;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
@@ -250,5 +251,17 @@ public class TaskDAO {
             System.out.println("User is null in getAssignedTasks!");
             return Collections.emptyList();
         }
+    }
+
+    public Task attachLocationToTask(Task t, Location l, User u) {
+        if (t != null & l != null) {
+            if (isUserOwnerOfTask(u, t)) {
+                prepareTaskForEdit(t);
+                t.setLocation(l);
+                saveTask(t);
+                return t;
+            }
+        }
+        return null;
     }
 }

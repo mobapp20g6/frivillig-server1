@@ -1,6 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.dao;
 
 import no.ntnu.mobapp20g6.appsrv.model.Group;
+import no.ntnu.mobapp20g6.appsrv.model.Location;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
 import javax.ejb.Stateless;
@@ -160,5 +161,17 @@ public class GroupDAO {
         }
         //User is not in group.
         return false;
+    }
+
+    public Group attachLocationToGroup(Group g, Location l, User u) {
+        if (g != null && l != null) {
+            if (isUserOwnerOfGroup(u,g)) {
+                prepareGroupForEdit(g);
+                g.setLocation(l);
+                saveGroup(g);
+                return g;
+            }
+        }
+        return null;
     }
 }
