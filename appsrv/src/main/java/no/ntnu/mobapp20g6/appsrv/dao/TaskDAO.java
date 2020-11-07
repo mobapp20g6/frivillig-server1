@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -49,7 +50,7 @@ public class TaskDAO {
      * @return the new task. Null if no task is found with given groupId.
      */
     public Task addTask(User creator, String title, String description,
-                        Long maxUsers, Date scheduleDate, Group group) {
+                        Long maxUsers, Timestamp scheduleDate, Group group) {
         Task task = createTask(creator, title, description, maxUsers, scheduleDate, group);
         if(task != null) {
             task = em.merge(task);
@@ -71,7 +72,7 @@ public class TaskDAO {
      * @return the new task. Null if title is missing or schedule date is before today's date.
      */
     private Task createTask(User creator, String title, String description,
-                        Long maxUsers, Date scheduleDate, Group group) {
+                            Long maxUsers, Timestamp scheduleDate, Group group) {
         if((title == null || title.isEmpty())) { //  || (scheduleDate.before(Calendar.getInstance().getTime()))
             //A task must have title and schedule date which is after today's date.
             return null;
@@ -128,7 +129,7 @@ public class TaskDAO {
      * @return Task if update was successful. Null if user is not owner or helping methods fail.
      */
     public Task updateTask(User updaterUser, Task taskToBeUpdated, String newTitle, String newDescription,
-                           Long newMaxUsers, Date newScheduleDate, Group newGroup) {
+                           Long newMaxUsers, Timestamp newScheduleDate, Group newGroup) {
         System.out.println("Updating task");
         if(isUserOwnerOfTask(updaterUser, taskToBeUpdated)) {
             prepareTaskForEdit(taskToBeUpdated);

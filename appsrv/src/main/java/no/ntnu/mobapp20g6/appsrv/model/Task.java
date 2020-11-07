@@ -25,6 +25,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,10 +34,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
-//@NamedQuery(name = Task.FIND_TASKS_ASSIGNED_TO, query = "SELECT t FROM tasks t WHERE t. LIKE :userId")
 public class Task implements Serializable {
     public static final String FIND_ALL_TASKS = "getAllTasks";
-    //public static final String FIND_TASKS_ASSIGNED_TO = "findTasksAssignedTo";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,8 +60,7 @@ public class Task implements Serializable {
     private Date created;
 
     @Column(name = "scheduel_date")
-    @Temporal(TemporalType.DATE)
-    private Date scheduleDate;
+    private Timestamp scheduleDate;
 
     @Size(max = 280)
     private String description;
@@ -138,7 +136,7 @@ public class Task implements Serializable {
      * @param creator of the task.
      * @param associatedGroup group the task is associated with. If null group is public.
      */
-    public Task(String title, String description, Date scheduled, Long participantLimit,
+    public Task(String title, String description, Timestamp scheduled, Long participantLimit,
                 User creator, Group associatedGroup) {
         this.title = title;
         this.description = description;
