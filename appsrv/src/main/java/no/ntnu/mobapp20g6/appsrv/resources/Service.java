@@ -417,6 +417,7 @@ public class Service {
                 }
             } else {
                 valid = null;
+                resp = Response.status(Response.Status.NOT_FOUND).build();
             }
         }
 
