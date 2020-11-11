@@ -28,9 +28,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import io.jsonwebtoken.*;
 import lombok.extern.java.Log;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.InvalidKeyException;
 
 import javax.annotation.Resource;
@@ -148,6 +147,30 @@ public class AuthenticationService {
 		return Response.status(Response.Status.UNAUTHORIZED)
 				.build();
 	}
+
+	@GET
+	@RolesAllowed(value = {RoleGroup.USER})
+    @Path("renew")
+	public Response updateToken(
+			@Context SecurityContext sc,
+			@Context HttpServletRequest request) {
+		if (sc.isUserInRole(RoleGroup.USER)) {
+			String oldtoken = request.getHeader("Authorization");
+
+			//FIXME: Key is checked by RolesAllowed and security context,
+			//       but it can be improved to validate the date in the token
+
+			String token = issueToken(principal.getName(),
+					principal.getGroups(), request);
+			return Response
+					.ok()
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+					.build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
+
 
 	/**
 	 * @param name
