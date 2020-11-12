@@ -19,7 +19,7 @@ import java.util.List;
 @Entity(name = "tasks")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false, exclude={"users, creatorUser"})
+@EqualsAndHashCode(callSuper = false, exclude={"users","creatorUser"})
 @NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
 public class Task implements Serializable {
     public static final String FIND_ALL_TASKS = "getAllTasks";
