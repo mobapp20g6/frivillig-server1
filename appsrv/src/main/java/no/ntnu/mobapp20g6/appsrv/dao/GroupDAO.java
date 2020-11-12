@@ -67,7 +67,7 @@ public class GroupDAO {
         }
     }
 
-    private boolean isUserOwnerOfGroup(User user, Group group) {
+    public boolean isUserOwnerOfGroup(User user, Group group) {
         return user.equals(group.getOwnerUser());
     }
 

@@ -363,6 +363,32 @@ public class Service {
         }
     }
 
+    @GET
+    @Path("/isownerofgroup")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response isOwnerOfGroup(
+            @QueryParam("groupid") Long groupId
+    ) {
+        if(groupId != null) {
+            Group group = groupDAO.getGroupById(groupId);
+            if(group != null) {
+                if(groupDAO.isUserOwnerOfGroup(userDAO.findUserById(principal.getName()), group)) {
+                    return Response.ok().build();
+                } else {
+                    //User is not the owner of the group
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+            } else {
+                //Group with groupId was not found.
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            //groupId was null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
     @POST
     @Path("/addlocation")
     @Produces(MediaType.APPLICATION_JSON)
