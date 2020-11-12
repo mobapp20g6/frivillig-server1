@@ -44,6 +44,7 @@ public class GroupDAO {
         if(group != null) {
             group = em.merge(group);
             em.flush();
+            addUserToGroup(creator, creator, group);
             return group;
         } else {
             return null;
@@ -159,6 +160,7 @@ public class GroupDAO {
      * @return true if user is in group.
      */
     public boolean isUserInGroup(User user, Group group) {
+        em.refresh(group);
         for (User userInGroup:group.getMemberUsers()) {
             if(userInGroup == user) {
                 //User is in group.
