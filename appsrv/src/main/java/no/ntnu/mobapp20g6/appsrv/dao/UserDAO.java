@@ -7,10 +7,12 @@ package no.ntnu.mobapp20g6.appsrv.dao;
 
 import lombok.extern.java.Log;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
+import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.security.enterprise.identitystore.PasswordHash;
@@ -221,5 +223,36 @@ public class UserDAO {
 			}
 		}
 		return result;
+	}
+
+	public void prepareUserForEdit(User user) {
+		System.out.println("user getting ready for edit.");
+		if(user != null) {
+			try {
+				em.lock(user, LockModeType.PESSIMISTIC_WRITE);
+			} catch (Exception e) {
+				System.out.println("Exception in prep user: " + e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Merge and lock the database.
+	 * @param userToSave group to be merged.
+	 * @return group if merge was successful else null.
+	 */
+	public User saveUser(User userToSave) {
+		System.out.println("Trying to save u.");
+		if(userToSave != null) {
+			try {
+				em.merge(userToSave);
+				em.lock(userToSave, LockModeType.NONE);
+				em.flush();
+				return userToSave;
+			} catch (Exception e) {
+				System.out.println("Exception in save uer: " + e.getMessage());
+			}
+		}
+		return null;
 	}
 }

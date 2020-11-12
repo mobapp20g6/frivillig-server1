@@ -17,7 +17,7 @@ import java.util.List;
 @Entity(name = "groups")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false, exclude={"memberUsers","associatedTasks","picture"})
+@EqualsAndHashCode(callSuper = false, exclude={"ownerUser","memberUsers","associatedTasks","picture"})
 @NamedQuery(name = Group.FIND_ALL_GROUPS, query = "SELECT g FROM groups g" )
 public class Group implements Serializable {
     public static final String FIND_ALL_GROUPS = "findAllGroups";
@@ -91,6 +91,5 @@ public class Group implements Serializable {
         if(this.memberUsers == null) {
             this.memberUsers = new ArrayList<>();
         }
-        this.memberUsers.add(creator);
     }
 }

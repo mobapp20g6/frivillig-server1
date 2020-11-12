@@ -324,7 +324,7 @@ public class Service {
                     //This should only happen if user is already in group.
                     //But can also happen if user trying to add is not owner of group
                     //Or method failed to add user to group.
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    return Response.status(Response.Status.OK).build();
                 }
             } else {
                 System.out.println("User and/or group was not found:\n" +
