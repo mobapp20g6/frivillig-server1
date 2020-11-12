@@ -17,7 +17,7 @@ import java.util.List;
 @Entity(name = "groups")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false, exclude={"ownerUser","memberUsers","associatedTasks","picture"})
+@EqualsAndHashCode(callSuper = false, exclude={"ownerUser","memberUsers","associatedTasks"})
 @NamedQuery(name = Group.FIND_ALL_GROUPS, query = "SELECT g FROM groups g" )
 public class Group implements Serializable {
     public static final String FIND_ALL_GROUPS = "findAllGroups";
@@ -50,8 +50,8 @@ public class Group implements Serializable {
 
     // 1-1 Owner
     @ManyToOne
-    @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id")
     @JsonbTransient
+    @JoinColumn(name = "owner_user_id", referencedColumnName = "user_id")
     private User ownerUser;
 
     // 1-1 Owner
