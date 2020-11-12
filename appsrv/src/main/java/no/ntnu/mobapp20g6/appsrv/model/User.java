@@ -21,7 +21,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false, exclude={"creatorOfTasks","ownedGroups","assignedTasks"})
+@EqualsAndHashCode(callSuper = false, exclude={"creatorOfTasks","ownedGroups","assignedTasks","roleGroups"})
 @NamedQuery(name = User.FIND_ALL_USERS,
         query = "SELECT p FROM users p ORDER BY p.firstName")
 @NamedQuery(name = User.FIND_USER_BY_EMAIL,
