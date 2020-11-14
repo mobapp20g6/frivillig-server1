@@ -22,7 +22,7 @@ public class TaskDAO {
     EntityManager em;
 
     public List<Task> getAllTasks() {
-        Query query = em.createNamedQuery(Task.FIND_ALL_TASKS);
+        Query query = em.createNamedQuery(Task.FIND_ALL_PUBLIC_TASKS);
         return query.getResultList();
     }
 
