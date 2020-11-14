@@ -49,7 +49,7 @@ public class ImageService {
 
         Group updatedGroup = dao.setGroupLogo(groupID, image);
         if (updatedGroup == null) {
-            return Response.status(Response.Status.NO_CONTENT).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
         return Response.ok(updatedGroup).build();
     }
@@ -65,7 +65,7 @@ public class ImageService {
 
         Task updatedTask = dao.setTaskImage(taskID, image);
         if (updatedTask == null)
-            return Response.status(Response.Status.NO_CONTENT).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         return Response.ok(updatedTask).build();
     }
 
