@@ -43,22 +43,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 /**
- * Authentication REST service used for login, logout and to register new users
  *
- * @Path("auth) makes this class into a JAX-RS REST service. "no.ntnu.mobapp20g6.appsrv.auth" specifies
- * that the URL of this service would begin with "domainname/chat/api/no.ntnu.mobapp20g6.appsrv.auth"
- * depending on the domain, context path of project and the JAX-RS base
- * configuration
- * @Produces(MediaType.APPLICATION_JSON) instructs JAX-RS that the default
- * result of a method is to be marshalled as JSON
- *
- * @Stateless makes this class into a transactional stateless EJB, which is a
- * requirement of using the JPA EntityManager to communicate with the database.
- *
- * @DeclareRoles({UserGroup.ADMIN,UserGroup.USER}) specifies the roles used in
- * this EJB.
- *
- * @author mikael
+ * @author nils
  */
 @Path("auth")
 @Stateless
@@ -292,9 +278,9 @@ public class AuthenticationService {
 	@Path("changepwd")
 	@RolesAllowed(value = {RoleGroup.USER})
 	public Response changePassword(
-			@QueryParam("email") String emailAccess,
-			@QueryParam("pwd") String newPasswd,
-			@QueryParam("oldpwd") String oldPasswd,
+			@FormParam("email") String emailAccess,
+			@FormParam("pwd") String newPasswd,
+			@FormParam("oldpwd") String oldPasswd,
 			@Context SecurityContext sc) {
 		System.out.println("=== INVOKING REST-AUTH: CHANGE PASSWORD ===");
 		System.out.print("Query parameters: email:" + emailAccess + ", role:" + newPasswd);
@@ -322,7 +308,7 @@ public class AuthenticationService {
 
 		Response.Status state = Response.Status.BAD_REQUEST;
 
-		if ((newPasswd == null || newPasswd.length() < 3)) {
+		if ((newPasswd == null || newPasswd.length() < 6)) {
 			log.log(Level.SEVERE, " #1 Failed to change password on u {0}", id);
 			System.out.println("- Password unsatisfied..............: " + newPasswd);
 			System.out.println();
@@ -342,10 +328,12 @@ public class AuthenticationService {
 					case VALID:
 						authorizedToChange = true;
 						state = Response.Status.OK;
+						System.out.println(" - OK");
 						break;
 
 					case INVALID:
 						state = Response.Status.FORBIDDEN;
+						System.out.println(" - Forbidden");
 						break;
 
 					case NOT_VALIDATED:
@@ -366,6 +354,10 @@ public class AuthenticationService {
 			System.out.println("- Password updated..................: " + newPasswd);
 			System.out.println();
 			state = Response.Status.fromStatusCode(200);
+		} else {
+			System.out.println("REST-AUTH: ERROR password not changed for user " + emailAccess);
+			System.out.println();
+
 		}
 
 		return Response.status(state).build();
