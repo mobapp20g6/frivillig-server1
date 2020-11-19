@@ -12,6 +12,9 @@ FROM payara/micro AS prod
 ## Fixes clock in payara log
 ENV TZ Europe/Oslo
 COPY --from=build /app/target/appsrv-1.0.war $DEPLOY_DIR/appsrv-1.0.war
+RUN mkdir /opt/payara/images
+RUN chown payara:payara /opt/payara/images
+USER payara
 
 
 ## Local build from IDE; only copy (no docker build) from exising .war file built by IDE
