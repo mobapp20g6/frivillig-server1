@@ -7,8 +7,6 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 public interface ImageDao {
 
-    Task testStoreImage(FormDataMultiPart image);
-
     Group setGroupLogo(Long groupID, FormDataMultiPart data);
 
     Task setTaskImage(Long taskID, FormDataMultiPart data);
