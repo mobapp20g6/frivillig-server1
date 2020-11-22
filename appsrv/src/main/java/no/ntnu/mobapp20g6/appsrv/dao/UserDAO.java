@@ -7,10 +7,12 @@ package no.ntnu.mobapp20g6.appsrv.dao;
 
 import lombok.extern.java.Log;
 import no.ntnu.mobapp20g6.appsrv.auth.RoleGroup;
+import no.ntnu.mobapp20g6.appsrv.model.Group;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.security.enterprise.identitystore.PasswordHash;
@@ -141,31 +143,31 @@ public class UserDAO {
 
 	}
 
-	public User addRoleGroup(User user, String RoleGroup, boolean add) {
-		RoleGroup RoleGroupToChange = findRoleGroupByName(RoleGroup);
-		if (RoleGroupToChange == null || user == null) {
+	public User addRoleGroup(User user, String roleGroup, boolean add) {
+		RoleGroup roleGroupToChange = findRoleGroupByName(roleGroup);
+		if (roleGroupToChange == null || user == null) {
 			System.out.println("=== USER EJB: UserRoleGroup MGMT ===");
 			System.out.println("- Status...........: " + "Parameters invalid");
 			return null;
 		} else {
 			List<RoleGroup> currentRoleGroups = user.getRoleGroups();
-			List<RoleGroup> predictedRoleGroups = new ArrayList<RoleGroup>(currentRoleGroups);
+			List<RoleGroup> predictedRoleGroups = new ArrayList<>(currentRoleGroups);
 			String action = "add";
 			if (add) {
-				if (!(predictedRoleGroups.contains(RoleGroupToChange))) {
-					predictedRoleGroups.add(RoleGroupToChange);
+				if (!(predictedRoleGroups.contains(roleGroupToChange))) {
+					predictedRoleGroups.add(roleGroupToChange);
 				}
 			} else {
 				action = "remove";
-				if (predictedRoleGroups.contains(RoleGroupToChange)) {
-					predictedRoleGroups.remove(RoleGroupToChange);
+				if (predictedRoleGroups.contains(roleGroupToChange)) {
+					predictedRoleGroups.remove(roleGroupToChange);
 				}
 			}
 
 			System.out.println("=== USER EJB: UserRoleGroup MGMT ===");
 			System.out.println("- User.............: " + user.getId());
 			System.out.println("- Current RoleGroups...: " + returnRoleGroupNames(currentRoleGroups));
-			System.out.println("- RoleGroups to " + action + ": " + RoleGroupToChange.getName());
+			System.out.println("- RoleGroups to " + action + ": " + roleGroupToChange.getName());
 			System.out.println("- Predicted update...: " + returnRoleGroupNames(predictedRoleGroups));
 
 			if (currentRoleGroups.equals(predictedRoleGroups)) {
@@ -173,16 +175,15 @@ public class UserDAO {
 				System.out.println("- Status...........: " + "NO CHANGE, SKIPPING");
 				return user;
 			} else {
-				List<RoleGroup> changedRoleGroups = currentRoleGroups;
 				if (add) {
-					changedRoleGroups.add(RoleGroupToChange);
+					currentRoleGroups.add(roleGroupToChange);
 					System.out.println("- Action.............: " + "ADD");
 				} else {
-					changedRoleGroups.remove(RoleGroupToChange);
+					currentRoleGroups.remove(roleGroupToChange);
 					System.out.println("- Action.............: " + "REVOKE");
 
 				}
-				System.out.println("- Completed update...: " + returnRoleGroupNames(changedRoleGroups));
+				System.out.println("- Completed update...: " + returnRoleGroupNames(currentRoleGroups));
 				em.flush();
 				return user;
 			}
@@ -202,14 +203,14 @@ public class UserDAO {
 	}
 
 	private RoleGroup findRoleGroupByName(String name) {
-		if (RoleGroupExists(name)) {
+		if (roleGroupExists(name)) {
 			return em.find(RoleGroup.class, name);
 		} else {
 			return null;
 		}
 	}
 
-	private boolean RoleGroupExists(String input) {
+	private boolean roleGroupExists(String input) {
 		boolean result = false;
 		if (input!= null) {
 			switch (input) {
@@ -222,5 +223,36 @@ public class UserDAO {
 			}
 		}
 		return result;
+	}
+
+	public void prepareUserForEdit(User user) {
+		System.out.println("user getting ready for edit.");
+		if(user != null) {
+			try {
+				em.lock(user, LockModeType.PESSIMISTIC_WRITE);
+			} catch (Exception e) {
+				System.out.println("Exception in prep user: " + e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Merge and lock the database.
+	 * @param userToSave group to be merged.
+	 * @return group if merge was successful else null.
+	 */
+	public User saveUser(User userToSave) {
+		System.out.println("Trying to save u.");
+		if(userToSave != null) {
+			try {
+				em.merge(userToSave);
+				em.lock(userToSave, LockModeType.NONE);
+				em.flush();
+				return userToSave;
+			} catch (Exception e) {
+				System.out.println("Exception in save uer: " + e.getMessage());
+			}
+		}
+		return null;
 	}
 }

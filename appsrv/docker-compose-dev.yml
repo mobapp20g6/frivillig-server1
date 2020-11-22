@@ -24,6 +24,8 @@ services:
       - "8080:8080"
       - "8181:8181"
       - "4848:4848"
+    volumes:
+    - payara-iamges:/opt/payara/images
     depends_on:
       - "database"
     environment:
@@ -53,3 +55,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 volumes:
   database-data:
+  payara-iamges:

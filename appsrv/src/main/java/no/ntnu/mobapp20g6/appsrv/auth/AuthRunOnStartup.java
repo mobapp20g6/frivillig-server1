@@ -10,7 +10,14 @@ import javax.persistence.PersistenceContext;
 import lombok.extern.java.Log;
 import no.ntnu.mobapp20g6.appsrv.dao.UserDAO;
 import no.ntnu.mobapp20g6.appsrv.model.User;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+/**
+ *  This class sets up authentication rolesgroups and an admin user
+ *  for administrating the server
+ */
 @Singleton
 @Startup
 @Log
@@ -37,7 +44,16 @@ public class AuthRunOnStartup {
 			+ em.createQuery("SELECT count(g.name) from RoleGroup g")
 				.getSingleResult() + " RoleGroups in DB");
 
-		User admin = userDao.createUser("admin@admin.ad", "123456", "Mix", "Master");
+		/**
+		 *  Inject the microprofile config variables
+		 */
+		Config config = ConfigProvider.getConfig();
+		String adminUser = config.getValue("userConfig.adminUser", String.class);
+		String adminPassword = config.getValue("userConfig.adminPass", String.class);
+		String adminFirstName = config.getValue("userConfig.adminFirstName", String.class);
+		String adminLastName = config.getValue("userConfig.adminLastName", String.class);
+
+		User admin = userDao.createUser(adminUser, adminPassword, adminFirstName, adminLastName);
 		// TEST DUP USER
 		//userBean.addRoleGroup(admin, "user", true);
 		// TEST REMOVE USER
@@ -46,10 +62,6 @@ public class AuthRunOnStartup {
 		//userBean.addRoleGroup(admin, "user", true);
 		// TEST ADD ADMIN
 		userDao.addRoleGroup(admin, "admin", true);
-
 		userDao.getUserInfo(admin);
-
-
-
 	}
 }

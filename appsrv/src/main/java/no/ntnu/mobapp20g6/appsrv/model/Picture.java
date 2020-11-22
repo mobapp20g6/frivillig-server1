@@ -1,9 +1,6 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
@@ -18,6 +15,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false, exclude={"group","task"})
 public class Picture implements Serializable {
 
     @Id
@@ -44,11 +42,13 @@ public class Picture implements Serializable {
     // 1-1 REF
     @Getter
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "picture")
+    @JsonbTransient
     private Group group;
 
 
     // 1-1 REF
     @Getter
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "picture")
+    @JsonbTransient
     private Task task;
 }

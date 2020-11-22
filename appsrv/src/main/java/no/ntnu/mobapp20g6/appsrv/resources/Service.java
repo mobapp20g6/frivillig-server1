@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 
+/**
+ * The main REST service endpoint
+ */
 @Path("/service")
 @Stateless
 public class Service {
@@ -363,6 +366,32 @@ public class Service {
         }
     }
 
+    @GET
+    @Path("/isownerofgroup")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(value = {RoleGroup.USER})
+    public Response isOwnerOfGroup(
+            @QueryParam("groupid") Long groupId
+    ) {
+        if(groupId != null) {
+            Group group = groupDAO.getGroupById(groupId);
+            if(group != null) {
+                if(groupDAO.isUserOwnerOfGroup(userDAO.findUserById(principal.getName()), group)) {
+                    return Response.ok().build();
+                } else {
+                    //User is not the owner of the group
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                }
+            } else {
+                //Group with groupId was not found.
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } else {
+            //groupId was null.
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
     @POST
     @Path("/addlocation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -389,7 +418,6 @@ public class Service {
             return resp;
         }
 
-        boolean success = false;
         boolean gpsValid = latitude != null && longitude != null ? true : false;
         boolean addressValid = streetAddr !=null && city != null && postal != null
                 && country != null ? true : false;
@@ -424,7 +452,7 @@ public class Service {
         if (valid != null) {
             if (task != null) {
                 if (task.getLocation() != null) {
-                        locationDAO.deleteLocation(taskDAO.detatchLocationFromTask(task,caller));
+                        locationDAO.deleteLocation(taskDAO.detachLocationFromTask(task,caller));
                 }
                 task = taskDAO.attachLocationToTask(task,valid,caller);
                 if (task != null) {

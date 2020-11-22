@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author mikael
+ * @author nils
  */
 @ApplicationScoped
 @Path("publickey.pem")

@@ -1,6 +1,7 @@
 package no.ntnu.mobapp20g6.appsrv.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,9 +19,12 @@ import java.util.List;
 @Entity(name = "tasks")
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false, exclude={"users"})
 @NamedQuery(name = Task.FIND_ALL_TASKS, query = "SELECT t FROM tasks t" )
+@NamedQuery(name = Task.FIND_ALL_PUBLIC_TASKS, query = "SELECT t FROM tasks t WHERE t.associatedGroup = null")
 public class Task implements Serializable {
     public static final String FIND_ALL_TASKS = "getAllTasks";
+    public static final String FIND_ALL_PUBLIC_TASKS = "getAllPublicTasks";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

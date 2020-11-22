@@ -6,7 +6,6 @@ import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
@@ -14,7 +13,6 @@ import javax.persistence.Query;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -24,7 +22,7 @@ public class TaskDAO {
     EntityManager em;
 
     public List<Task> getAllTasks() {
-        Query query = em.createNamedQuery(Task.FIND_ALL_TASKS);
+        Query query = em.createNamedQuery(Task.FIND_ALL_PUBLIC_TASKS);
         return query.getResultList();
     }
 
@@ -266,7 +264,7 @@ public class TaskDAO {
         return null;
     }
 
-    public Location detatchLocationFromTask(Task t, User u) {
+    public Location detachLocationFromTask(Task t, User u) {
         Location location = null;
         if (u != null && t != null) {
             if (isUserOwnerOfTask(u, t)) {

@@ -6,6 +6,7 @@ import no.ntnu.mobapp20g6.appsrv.model.Task;
 import no.ntnu.mobapp20g6.appsrv.model.User;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
@@ -15,6 +16,9 @@ import java.util.List;
 
 @Stateless
 public class GroupDAO {
+
+    @Inject
+    UserDAO userDAO;
     @PersistenceContext
     EntityManager em;
 
@@ -40,6 +44,7 @@ public class GroupDAO {
         if(group != null) {
             group = em.merge(group);
             em.flush();
+            addUserToGroup(creator, creator, group);
             return group;
         } else {
             return null;
@@ -62,7 +67,7 @@ public class GroupDAO {
         }
     }
 
-    private boolean isUserOwnerOfGroup(User user, Group group) {
+    public boolean isUserOwnerOfGroup(User user, Group group) {
         return user.equals(group.getOwnerUser());
     }
 
@@ -129,11 +134,12 @@ public class GroupDAO {
      */
     public boolean addUserToGroup(User groupOwner, User userToBeAdded, Group group) {
         if(groupOwner != null && userToBeAdded != null && group != null) {
+            em.refresh(group);
             if (groupOwner == group.getOwnerUser()) {
                 if(!isUserInGroup(userToBeAdded, group)) {
-                    prepareGroupForEdit(group);
-                    group.getMemberUsers().add(userToBeAdded);
-                    saveGroup(group);
+                    userDAO.prepareUserForEdit(userToBeAdded);
+                    userToBeAdded.setMemberOfGroup(group);
+                    userDAO.saveUser(userToBeAdded);
                     //Returns true if user was successfully added to the group.
                     return isUserInGroup(userToBeAdded, group);
                 } else {
@@ -154,6 +160,7 @@ public class GroupDAO {
      * @return true if user is in group.
      */
     public boolean isUserInGroup(User user, Group group) {
+        em.refresh(group);
         for (User userInGroup:group.getMemberUsers()) {
             if(userInGroup == user) {
                 //User is in group.

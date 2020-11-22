@@ -15,11 +15,6 @@ public class ImageDaoStub implements ImageDao {
     public static final int INCOMING_PHOTO_WIDTH_NOT_GIVEN = 0;
 
     @Override
-    public Task testStoreImage(FormDataMultiPart image) {
-        return null;
-    }
-
-    @Override
     public Group setGroupLogo(Long groupId, FormDataMultiPart data) {
         Group fakeGroup = new Group();
         fakeGroup.setId(EXISTING_GROUP_ID);

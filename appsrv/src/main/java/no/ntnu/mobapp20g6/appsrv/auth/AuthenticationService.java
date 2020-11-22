@@ -28,9 +28,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import io.jsonwebtoken.*;
 import lombok.extern.java.Log;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.InvalidKeyException;
 
 import javax.annotation.Resource;
@@ -44,22 +43,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 /**
- * Authentication REST service used for login, logout and to register new users
- *
- * @Path("auth) makes this class into a JAX-RS REST service. "no.ntnu.mobapp20g6.appsrv.auth" specifies
- * that the URL of this service would begin with "domainname/chat/api/no.ntnu.mobapp20g6.appsrv.auth"
- * depending on the domain, context path of project and the JAX-RS base
- * configuration
- * @Produces(MediaType.APPLICATION_JSON) instructs JAX-RS that the default
- * result of a method is to be marshalled as JSON
- *
- * @Stateless makes this class into a transactional stateless EJB, which is a
- * requirement of using the JPA EntityManager to communicate with the database.
- *
- * @DeclareRoles({UserGroup.ADMIN,UserGroup.USER}) specifies the roles used in
- * this EJB.
- *
- * @author mikael
+ *  The authentication REST endpoint
  */
 @Path("auth")
 @Stateless
@@ -77,17 +61,9 @@ public class AuthenticationService {
 	@ConfigProperty(name = "mp.jwt.verify.issuer", defaultValue = "issuer")
 	String issuer;
 
-	/**
-	 * The application server will inject a DataSource as a way to
-	 * communicate with the database.
-	 */
 	@Resource(lookup = DatasourceProducer.JNDI_NAME)
 	DataSource dataSource;
 
-	/**
-	 * The application server will inject a EntityManager as a way to
-	 * communicate with the database via JPA.
-	 */
 	@PersistenceContext
 	EntityManager em;
 
@@ -102,8 +78,8 @@ public class AuthenticationService {
 	UserDAO userDao;
 
 	/**
-	 * @param email
-	 * @param pwd
+	 * @param email email address of user logging in
+	 * @param pwd password of user logging in
 	 * @param request
 	 * @return
 	 */
@@ -150,10 +126,32 @@ public class AuthenticationService {
 	}
 
 	/**
-	 * @param name
-	 * @param groups
-	 * @param request
-	 * @return
+	 *  Get a new JWT token of the currently logged on user
+	 */
+	@GET
+	@RolesAllowed(value = {RoleGroup.USER})
+    @Path("renew")
+	public Response updateToken(
+			@Context SecurityContext sc,
+			@Context HttpServletRequest request) {
+		if (sc.isUserInRole(RoleGroup.USER)) {
+			String oldtoken = request.getHeader("Authorization");
+
+			String token = issueToken(principal.getName(),
+					principal.getGroups(), request);
+			return Response
+					.ok()
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+					.build();
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
+
+
+	/**
+     * Helper function to issue tokens
+	 * @return A JWT token
 	 */
 	private String issueToken(String name, Set<String> groups, HttpServletRequest request) {
 		try {
@@ -180,6 +178,14 @@ public class AuthenticationService {
 		}
 	}
 
+	/**
+	 * Helper function for creating a new user and building a HTTP response for use in REST APIs
+	 * @param email email of user to create
+	 * @param pwd passwd of user to create
+	 * @param firstName first name of user to create
+	 * @param lastName last name of user to create
+	 * @return the result of the operation, either bad request due to input or success
+	 */
 	private Response buildCreatedUserResponse(String email, String pwd, String firstName, String lastName) {
 		System.out.println("=== INVOKING REST-AUTH: CREATE USER ===");
 		System.out.print("Query parameters: email:" + email + ", password:" + pwd);
@@ -269,9 +275,9 @@ public class AuthenticationService {
 	@Path("changepwd")
 	@RolesAllowed(value = {RoleGroup.USER})
 	public Response changePassword(
-			@QueryParam("email") String emailAccess,
-			@QueryParam("pwd") String newPasswd,
-			@QueryParam("oldpwd") String oldPasswd,
+			@FormParam("email") String emailAccess,
+			@FormParam("pwd") String newPasswd,
+			@FormParam("oldpwd") String oldPasswd,
 			@Context SecurityContext sc) {
 		System.out.println("=== INVOKING REST-AUTH: CHANGE PASSWORD ===");
 		System.out.print("Query parameters: email:" + emailAccess + ", role:" + newPasswd);
@@ -299,7 +305,7 @@ public class AuthenticationService {
 
 		Response.Status state = Response.Status.BAD_REQUEST;
 
-		if ((newPasswd == null || newPasswd.length() < 3)) {
+		if ((newPasswd == null || newPasswd.length() < 6)) {
 			log.log(Level.SEVERE, " #1 Failed to change password on u {0}", id);
 			System.out.println("- Password unsatisfied..............: " + newPasswd);
 			System.out.println();
@@ -319,10 +325,12 @@ public class AuthenticationService {
 					case VALID:
 						authorizedToChange = true;
 						state = Response.Status.OK;
+						System.out.println(" - OK");
 						break;
 
 					case INVALID:
 						state = Response.Status.FORBIDDEN;
+						System.out.println(" - Forbidden");
 						break;
 
 					case NOT_VALIDATED:
@@ -343,6 +351,10 @@ public class AuthenticationService {
 			System.out.println("- Password updated..................: " + newPasswd);
 			System.out.println();
 			state = Response.Status.fromStatusCode(200);
+		} else {
+			System.out.println("REST-AUTH: ERROR password not changed for user " + emailAccess);
+			System.out.println();
+
 		}
 
 		return Response.status(state).build();
