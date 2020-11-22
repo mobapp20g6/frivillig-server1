@@ -84,6 +84,15 @@ public class ImageService {
         return Response.ok(updatedTask).build();
     }
 
+    /**
+     * Gets an image from data source. If width provided, the image
+     * will be resized to the new width and its corresponding height,
+     * keeping the same format.
+     * Will also ask server to cache the image for 24 hours.
+     * @param id the id of the image.
+     * @param width the preferred width of the returned image.
+     * @return Response containing the image if successful.
+     */
     @GET
     @Path("getimage")
     @Produces("image/jpeg")

@@ -15,6 +15,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.awt.*;
 
+/**
+ * Unit tests of Image Service.
+ * Written in an effort to try TDD.
+ * Commentated tests fails since they require there to be a owning user of a task/group.
+ */
 @RunWith(Enclosed.class)
 public class ImageServiceTest {
 
@@ -67,34 +72,6 @@ public class ImageServiceTest {
 
     @Nested
     class GivenSetTaskImage {
-        /*@Test
-        void whenCorrectRequest_thenResponseIsOk() {
-            ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.setTaskImage(
-                    ImageDaoStub.EXISTING_TASK_ID,
-                    ImageDaoStub.INCOMING_PHOTO
-            );
-            assertEquals(
-                    "HTTP Response should be 200",
-                    Response.Status.OK.getStatusCode(),
-                    response.getStatus()
-            );
-        }*/
-
-        /*@Test
-        void whenCorrectRequest_thenResponseContainsTask() {
-            ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.setTaskImage(
-                    ImageDaoStub.EXISTING_TASK_ID,
-                    ImageDaoStub.INCOMING_PHOTO
-            );
-            assertEquals(
-                    "HTTP Response should contain Task",
-                    Task.class,
-                    response.getEntity().getClass()
-            );
-        }*/
-
         @Test
         void whenMissingTaskID_thenResponseIsBadRequest() {
             ImageService imageService = new ImageService(new ImageDaoStub());
@@ -122,23 +99,37 @@ public class ImageServiceTest {
                     response.getStatus()
             );
         }
+        /*@Test
+        void whenCorrectRequest_thenResponseIsOk() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setTaskImage(
+                    ImageDaoStub.EXISTING_TASK_ID,
+                    ImageDaoStub.INCOMING_PHOTO
+            );
+            assertEquals(
+                    "HTTP Response should be 200",
+                    Response.Status.OK.getStatusCode(),
+                    response.getStatus()
+            );
+        }*/
+
+        /*@Test
+        void whenCorrectRequest_thenResponseContainsTask() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setTaskImage(
+                    ImageDaoStub.EXISTING_TASK_ID,
+                    ImageDaoStub.INCOMING_PHOTO
+            );
+            assertEquals(
+                    "HTTP Response should contain Task",
+                    Task.class,
+                    response.getEntity().getClass()
+            );
+        }*/
     }
 
     @Nested
     class GivenSetGroupLogo {
-/*        @Test
-        void whenCorrectRequest_thenResponseContainsGroup() {
-            ImageService imageService = new ImageService(new ImageDaoStub());
-            Response response = imageService.setGroupLogo(
-                    ImageDaoStub.EXISTING_GROUP_ID,
-                    ImageDaoStub.INCOMING_PHOTO
-            );
-            assertEquals(
-                    "HTTP Response should contain Group",
-                    Group.class,
-                    response.getEntity().getClass()
-            );
-        }*/
 
         @Test
         void whenMissingGroupID_thenResponseIsBadRequest() {
@@ -167,6 +158,21 @@ public class ImageServiceTest {
                     response.getStatus()
             );
         }
+
+        /*
+        @Test
+        void whenCorrectRequest_thenResponseContainsGroup() {
+            ImageService imageService = new ImageService(new ImageDaoStub());
+            Response response = imageService.setGroupLogo(
+                    ImageDaoStub.EXISTING_GROUP_ID,
+                    ImageDaoStub.INCOMING_PHOTO
+            );
+            assertEquals(
+                    "HTTP Response should contain Group",
+                    Group.class,
+                    response.getEntity().getClass()
+            );
+        }*/
 
         /*@Test
         void whenCorrectRequest_thenResponseIsOk() {
