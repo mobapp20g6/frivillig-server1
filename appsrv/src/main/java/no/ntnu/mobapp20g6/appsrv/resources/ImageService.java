@@ -23,6 +23,9 @@ import javax.ws.rs.core.StreamingOutput;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * The REST endpoint for handeling image operations
+ */
 @Path("image")
 @Stateless
 public class ImageService {

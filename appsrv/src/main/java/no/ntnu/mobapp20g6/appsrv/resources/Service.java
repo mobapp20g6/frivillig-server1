@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 
+/**
+ * The main REST service endpoint
+ */
 @Path("/service")
 @Stateless
 public class Service {

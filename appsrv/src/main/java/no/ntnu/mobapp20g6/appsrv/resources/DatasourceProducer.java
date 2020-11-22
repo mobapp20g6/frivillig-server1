@@ -13,10 +13,6 @@ import javax.sql.DataSource;
 
 import static no.ntnu.mobapp20g6.appsrv.resources.DatasourceProducer.JNDI_NAME;
 
-/**
- *
- * @author mikael
- */
 @Singleton
 @DataSourceDefinition(
     name            = JNDI_NAME,

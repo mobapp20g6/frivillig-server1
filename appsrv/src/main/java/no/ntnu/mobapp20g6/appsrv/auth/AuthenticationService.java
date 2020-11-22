@@ -43,8 +43,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 /**
- *
- * @author nils
+ *  The authentication REST endpoint
  */
 @Path("auth")
 @Stateless
@@ -126,6 +125,9 @@ public class AuthenticationService {
 				.build();
 	}
 
+	/**
+	 *  Get a new JWT token of the currently logged on user
+	 */
 	@GET
 	@RolesAllowed(value = {RoleGroup.USER})
     @Path("renew")
@@ -148,10 +150,8 @@ public class AuthenticationService {
 
 
 	/**
-	 * @param name
-	 * @param groups
-	 * @param request
-	 * @return
+     * Helper function to issue tokens
+	 * @return A JWT token
 	 */
 	private String issueToken(String name, Set<String> groups, HttpServletRequest request) {
 		try {
@@ -178,6 +178,14 @@ public class AuthenticationService {
 		}
 	}
 
+	/**
+	 * Helper function for creating a new user and building a HTTP response for use in REST APIs
+	 * @param email email of user to create
+	 * @param pwd passwd of user to create
+	 * @param firstName first name of user to create
+	 * @param lastName last name of user to create
+	 * @return the result of the operation, either bad request due to input or success
+	 */
 	private Response buildCreatedUserResponse(String email, String pwd, String firstName, String lastName) {
 		System.out.println("=== INVOKING REST-AUTH: CREATE USER ===");
 		System.out.print("Query parameters: email:" + email + ", password:" + pwd);

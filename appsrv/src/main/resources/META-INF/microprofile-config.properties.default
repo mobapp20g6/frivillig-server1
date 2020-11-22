@@ -9,3 +9,9 @@ dataSource.databaseName=databasename
 
 dataSource.user=username
 dataSource.password=password
+
+# Admin user of server, must be filled out
+userConfig.adminUser=myuser@example.com
+userConfig.adminPass=123456
+userConfig.adminFirstName=System
+userConfig.adminLastName=Admin
