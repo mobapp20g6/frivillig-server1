@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Entity(name = "locations")
 @Data
+@EqualsAndHashCode(callSuper = false, exclude={"task", "group"})
 @NoArgsConstructor
 public class Location implements Serializable {
 
