@@ -40,7 +40,7 @@ services:
       - "traefik.http.routers.api.tls=true"
       - "traefik.http.routers.api.tls.certresolver=buypass"
     volumes:
-      - api-pictures:/api-pictures
+      - api-pictures:/opt/payara/images
 
   reverse-proxy:
     container_name: frivillig-proxy
@@ -50,8 +50,6 @@ services:
       # Front ports
       - "80:80"
       - "443:443"
-      # The Web UI (enabled by --api.insecure=true)
-      - "127.0.0.1:8088:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
