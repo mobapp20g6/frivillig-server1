@@ -8,7 +8,7 @@ import javax.ws.rs.ApplicationPath;
 
 /**
  * Configures JAX-RS for the application.
- * @author Juneau
+ * @author nils, trym & martin
  */
 @ApplicationPath("resources")
 public class JAXRSConfiguration extends ResourceConfig {

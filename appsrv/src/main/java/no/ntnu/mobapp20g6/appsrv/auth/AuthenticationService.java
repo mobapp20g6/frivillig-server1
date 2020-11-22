@@ -62,17 +62,9 @@ public class AuthenticationService {
 	@ConfigProperty(name = "mp.jwt.verify.issuer", defaultValue = "issuer")
 	String issuer;
 
-	/**
-	 * The application server will inject a DataSource as a way to
-	 * communicate with the database.
-	 */
 	@Resource(lookup = DatasourceProducer.JNDI_NAME)
 	DataSource dataSource;
 
-	/**
-	 * The application server will inject a EntityManager as a way to
-	 * communicate with the database via JPA.
-	 */
 	@PersistenceContext
 	EntityManager em;
 
@@ -87,8 +79,8 @@ public class AuthenticationService {
 	UserDAO userDao;
 
 	/**
-	 * @param email
-	 * @param pwd
+	 * @param email email address of user logging in
+	 * @param pwd password of user logging in
 	 * @param request
 	 * @return
 	 */
@@ -142,9 +134,6 @@ public class AuthenticationService {
 			@Context HttpServletRequest request) {
 		if (sc.isUserInRole(RoleGroup.USER)) {
 			String oldtoken = request.getHeader("Authorization");
-
-			//FIXME: Key is checked by RolesAllowed and security context,
-			//       but it can be improved to validate the date in the token
 
 			String token = issueToken(principal.getName(),
 					principal.getGroups(), request);

@@ -20,6 +20,9 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ *  RoleGroups is
+ */
 @Entity
 @Table(name = "rolegroups")
 @Data
