@@ -69,6 +69,7 @@ public class ImageDaoImpl implements ImageDao{
             }
         } catch (IOException ioe) {
             log.log(Level.INFO, ioe.getMessage());
+            return null;
         }
         return group;
     }
@@ -103,6 +104,7 @@ public class ImageDaoImpl implements ImageDao{
             }
         } catch (IOException ioe) {
             log.log(Level.INFO, ioe.getMessage());
+            return null;
         }
         return task;
     }
