@@ -54,6 +54,7 @@ public class AuthRunOnStartup {
 		String adminLastName = config.getValue("userConfig.adminLastName", String.class);
 
 		User admin = userDao.createUser(adminUser, adminPassword, adminFirstName, adminLastName);
+		System.out.println("New email parsing");
 		// TEST DUP USER
 		//userBean.addRoleGroup(admin, "user", true);
 		// TEST REMOVE USER
