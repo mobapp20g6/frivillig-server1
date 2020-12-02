@@ -66,6 +66,7 @@ public class UserDAO {
 		if (email == null) {
 			return null;
 		}
+		email.toLowerCase();
 		query.setParameter("email", email);
 		System.out.print("Query parameters: mail:" + email);
 		List<User> foundUsers = query.getResultList();
@@ -99,6 +100,7 @@ public class UserDAO {
 		System.out.print("Query parameters: mail:" + email
 			+ ", pass:" + password);
 		if (email == null || password == null) return null;
+		email.toLowerCase();
 		User u = findUserByEmail(email);
 
 		if (u != null) {
