@@ -11,6 +11,9 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
+/**
+ * @author trymv
+ */
 @Entity(name = "pictures")
 @Data
 @AllArgsConstructor

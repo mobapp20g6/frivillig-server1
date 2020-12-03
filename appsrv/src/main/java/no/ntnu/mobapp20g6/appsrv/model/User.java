@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author nils
+ */
 @Entity(name = "users")
 @Data
 @AllArgsConstructor

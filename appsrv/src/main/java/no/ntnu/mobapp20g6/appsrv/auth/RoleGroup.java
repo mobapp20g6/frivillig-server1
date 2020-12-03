@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  *  RoleGroups is
+ * @author nils
  */
 @Entity
 @Table(name = "rolegroups")

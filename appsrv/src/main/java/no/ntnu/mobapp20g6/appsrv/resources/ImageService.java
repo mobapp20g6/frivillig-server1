@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 
 /**
  * The REST endpoint for handeling image operations
+ * @author maardal
  */
 @Path("image")
 @Stateless
