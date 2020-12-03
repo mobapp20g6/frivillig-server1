@@ -15,6 +15,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author trymv
+ */
 @Stateless
 public class TaskDAO {
 

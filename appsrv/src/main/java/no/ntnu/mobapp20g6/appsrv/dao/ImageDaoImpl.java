@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * @author maardal
+ */
 @Log
 @Stateless
 @ImageDaoProducer
