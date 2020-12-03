@@ -14,6 +14,9 @@ import javax.persistence.Query;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author trymv
+ */
 @Stateless
 public class GroupDAO {
 

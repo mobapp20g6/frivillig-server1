@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * The main REST service endpoint
+ * @author trymv
  */
 @Path("/service")
 @Stateless

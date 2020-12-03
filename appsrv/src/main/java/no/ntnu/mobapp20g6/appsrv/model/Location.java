@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * @author trymv
+ */
 @Entity(name = "locations")
 @Data
 @EqualsAndHashCode(callSuper = false, exclude={"task", "group"})

@@ -44,6 +44,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 /**
  *  The authentication REST endpoint
+ * @author nils
  */
 @Path("auth")
 @Stateless

@@ -26,6 +26,9 @@ import static no.ntnu.mobapp20g6.appsrv.resources.DatasourceProducer.JNDI_NAME;
     maxPoolSize     = 50
 )
 
+/**
+ * @author nils
+ */
 public class DatasourceProducer {
     public static final String JNDI_NAME =  "java:app/jdbc/postgres-microprofile";
 

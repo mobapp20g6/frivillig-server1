@@ -10,6 +10,9 @@ import no.ntnu.mobapp20g6.appsrv.model.Location;
 import no.ntnu.mobapp20g6.appsrv.model.Task;
 import org.eclipse.persistence.exceptions.DatabaseException;
 
+/**
+ * @author nils
+ */
 public class LocationDAO {
 
     @PersistenceContext

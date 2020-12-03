@@ -17,6 +17,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 /**
  *  This class sets up authentication rolesgroups and an admin user
  *  for administrating the server
+ * @author nils
  */
 @Singleton
 @Startup
